@@ -21,28 +21,46 @@ initialt=1288971842.041
 
 def odo():
 
-    displacement =np.zeros((len(odometry),1)) # 1D array to hold calculated displacement values
+    # 2D array to hold calculated displacement and theta values, another for x&Y values
+    displacement=np.zeros((len(odometry),2))
+    delta=np.zeros((len(odometry),2))
 
+    # calulates mometary displacement and theta
     for i in range(len(odometry)):
         if i==0:
-            displacement[i]=odometry[i,1]*(odometry[i,0]-initialt)
+            displacement[i,0]=odometry[i,1]*(odometry[i,0]-initialt) # finds displacement
+            displacement[i,1]=odometry[i,2]*(odometry[i,0]-initialt) # finds delta theta
         else:
-            displacement[i]=odometry[i,1]*(odometry[i,0]-odometry[i-1,0])
+            displacement[i,0]=odometry[i,1]*(odometry[i,0]-odometry[i-1,0]) # finds displacement
+            displacement[i,1]=odometry[i,2]*(odometry[i,0]-odometry[i-1,0]) # findsa delta theta
+
+    # translates displacement and theta into x & y coordinates
+    deltax=np.cos(displacement[:,1])*displacement[:,0]
+    deltay=np.sin(displacement[:,1])*displacement[:,0]
+
+    #delta[:,0]=np.cos(displacement[:,1])*displacement[:,0]
+    #delta[:,1]=np.sin(displacement[:,1])*displacement[:,0]
+
+    delta[0,0]=initialx
+    delta[0,1]=initialy
+
+    for i in range(1,len(delta)):
+        delta[i,0]=delta[i-1,0]+deltax[i]
+        delta[i,1]=delta[i-1,1]+deltay[i]
+    
+    return delta
 
 def main():
 
     # plots position data from motion capture
-    p.plot(groundtruth[:,1],groundtruth[:,2])
+    #p.plot(groundtruth[:,1],groundtruth[:,2])
 
     # plots landmark positions
     p.plot(landmark[:,1],landmark[:,2],'rx')
 
-    # plots position data measured from robot
-    x=np.cos(measurement[:,3])*measurement[:,2]
-    y=np.sin(measurement[:,3])*measurement[:,2]
+    delta=odo()
 
-    odo()
-    #p.plot(x,y)
+    p.plot(delta[:,0],delta[:,1],'bo')
 
     p.show()
 
