@@ -14,7 +14,6 @@ landmark=np.loadtxt('ds1_Landmark_Groundtruth.dat') # landmark data
 measurement=np.loadtxt('ds1_Measurement.dat') # position data measureed from robot
 odometry=np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
-
 # def dataprep():
 #
 #     x=np.cos(odometry[:,3])
