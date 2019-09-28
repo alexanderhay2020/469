@@ -14,11 +14,20 @@ landmark=np.loadtxt('ds1_Landmark_Groundtruth.dat') # landmark data
 measurement=np.loadtxt('ds1_Measurement.dat') # position data measureed from robot
 odometry=np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
-# def dataprep():
-#
-#     x=np.cos(odometry[:,3])
-#     y=np.sin(odometry[:,3])
+initialx=0.98038490
+initialy=-4.99232180
+initialrad=1.44849633
+initialt=1288971842.041
 
+def odo():
+
+    displacement =np.zeros((len(odometry),1)) # 1D array to hold calculated displacement values
+
+    for i in range(len(odometry)):
+        if i==0:
+            displacement[i]=odometry[i,1]*(odometry[i,0]-initialt)
+        else:
+            displacement[i]=odometry[i,1]*(odometry[i,0]-odometry[i-1,0])
 
 def main():
 
@@ -31,6 +40,8 @@ def main():
     # plots position data measured from robot
     x=np.cos(measurement[:,3])*measurement[:,2]
     y=np.sin(measurement[:,3])*measurement[:,2]
+
+    odo()
     #p.plot(x,y)
 
     p.show()
