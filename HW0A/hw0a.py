@@ -17,39 +17,39 @@ odometry=np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured f
 initialx=0.98038490
 initialy=-4.99232180
 initialrad=1.44849633
-initialt=1288971842.041
 
 def odo():
 
-    # 4D array to hold calculated displacement, theta, x, and Y values
-    delta=np.zeros((len(odometry),4))
+    # 2D array to hold calculated x, y, and theta values
+    delta=np.zeros((len(odometry),3))
 
-    delta[0,2]=initialx
-    delta[0,3]=initialy
+    delta[0,0]=initialx
+    delta[0,1]=initialy
+    delta[0,2]=initialrad
 
-    # calulates mometary displacement and theta
-    for i in range(len(odometry)):
-        if i==0:
-            delta[i,0]=odometry[i,1]*(odometry[i,0]-initialt) # finds displacement (m)
-            delta[i,1]=odometry[i,2]*(odometry[i,0]-initialt) # finds delta theta (rad)
+    # calulates time and theta, then applies displacement equations
+    for i in range(1,len(odometry)-1):
 
-        else:
-            delta[i,0]=odometry[i,1]*(odometry[i,0]-odometry[i-1,0]) # finds displacement (m)
-            delta[i,1]=odometry[i,2]*(odometry[i,0]-odometry[i-1,0]) # finds delta theta (rad)
+        time=odometry[i+1,0]-odometry[i,0] # executes command from timestamp until next command is issued
+        vel=odometry[i,1]
+
+        delta[i,2]=delta[i-1,2]+(odometry[i,2]*time) # theta value
+        delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
+        delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
     # translates displacement into x & y coordinates
 
-    for i in range(len(delta)):
-        if i==0:
-            delta[i,2]=np.cos(delta[i,1]-initialrad)*delta[i,0]
-            delta[i,3]=np.sin(delta[i,1]-initialrad)*delta[i,0]
-        else:
-            delta[i,2]=np.cos(delta[i,1]+delta[i-1,1])*delta[i,0]
-            delta[i,3]=np.sin(delta[i,1]+delta[i-1,1])*delta[i,0]
-
-    for i in range(1,len(delta)):
-        delta[i,2]=delta[i-1,2]+delta[i,2]
-        delta[i,3]=delta[i-1,3]+delta[i,3]
+    # for i in range(len(delta)):
+    #     if i==0:
+    #         delta[i,2]=np.cos(delta[i,1]-initialrad)*delta[i,0]
+    #         delta[i,3]=np.sin(delta[i,1]-initialrad)*delta[i,0]
+    #     else:
+    #         delta[i,2]=np.cos(delta[i,1]+delta[i-1,1])*delta[i,0]
+    #         delta[i,3]=np.sin(delta[i,1]+delta[i-1,1])*delta[i,0]
+    #
+    # for i in range(1,len(delta)):
+    #     delta[i,2]=delta[i-1,2]+delta[i,2]
+    #     delta[i,3]=delta[i-1,3]+delta[i,3]
 
     return delta
 
@@ -59,7 +59,7 @@ def plotbarriers():
     p.title("Global Position")
     p.xlabel("x position (m)")
     p.ylabel("y position (m)")
-
+    p.autoscale=True
     # plots landmark positions
     p.plot(landmark[:,1],landmark[:,2],'ro')
 
@@ -89,16 +89,16 @@ def plotbarriers():
         ha='center') # horizontal adjustment; left, right, or center
 
     # plots position data from motion capture
-    p.plot(groundtruth[:,1],groundtruth[:,2],'b-',label='groundtruth')
+    #p.plot(groundtruth[:,1],groundtruth[:,2],'b-',label='groundtruth')
 
     # creates legend
-    p.legend(loc='best')
+    #p.legend(loc='best')
 
 def main():
 
     delta=odo()
     plotbarriers()
-    #p.plot(delta[:,2],delta[:,3],'bo')
+    p.plot(delta[:,0],delta[:,1])
 
     p.show()
 
