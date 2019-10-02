@@ -37,19 +37,21 @@ def odo():
         delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
         delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
-    # translates displacement into x & y coordinates
+        # xt is the state vector
+        # At is an nxn identity matrix
+        # B is an mxm matrix
+        # ut is the control vector
+        # zt is the sensor vector
+        # Et is state transition noise
+        # dt is measurement noise
 
-    # for i in range(len(delta)):
-    #     if i==0:
-    #         delta[i,2]=np.cos(delta[i,1]-initialrad)*delta[i,0]
-    #         delta[i,3]=np.sin(delta[i,1]-initialrad)*delta[i,0]
-    #     else:
-    #         delta[i,2]=np.cos(delta[i,1]+delta[i-1,1])*delta[i,0]
-    #         delta[i,3]=np.sin(delta[i,1]+delta[i-1,1])*delta[i,0]
-    #
-    # for i in range(1,len(delta)):
-    #     delta[i,2]=delta[i-1,2]+delta[i,2]
-    #     delta[i,3]=delta[i-1,3]+delta[i,3]
+        xt=delta[i,:]
+        ut=[vel*np.cos(delta[i,2]),vel*np.sin(delta[i,2]),odometry[i,2]]
+        ut=np.asarray(ut) # converts list to array for posterity
+        At=np.identity(len(xt))
+
+        B=np.zeros((len(xt),len(xt))) # creates change in time matrix
+        np.fill_diagonal(B,[time])
 
     return delta
 
@@ -60,6 +62,7 @@ def plotbarriers():
     p.xlabel("x position (m)")
     p.ylabel("y position (m)")
     p.autoscale=True
+
     # plots landmark positions
     p.plot(landmark[:,1],landmark[:,2],'ro')
 
@@ -88,17 +91,16 @@ def plotbarriers():
         xytext=(7,10), # distance from text to points (x,y)
         ha='center') # horizontal adjustment; left, right, or center
 
-    # plots position data from motion capture
-    #p.plot(groundtruth[:,1],groundtruth[:,2],'b-',label='groundtruth')
-
-    # creates legend
-    #p.legend(loc='best')
-
 def main():
 
     delta=odo()
     plotbarriers()
-    p.plot(delta[:,0],delta[:,1])
+    # plots position data from motion capture
+    p.plot(groundtruth[:,1],groundtruth[:,2],'b-',label='groundtruth')
+    p.plot(delta[:,0],delta[:,1],'g-',label='odometry')
+
+    # creates legend
+    p.legend(loc='best')
 
     p.show()
 
