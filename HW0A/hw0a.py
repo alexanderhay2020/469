@@ -22,18 +22,19 @@ def odo():
 
     # 2D array to hold calculated x, y, and theta values
     delta=np.zeros((len(odometry),3))
+    xt=np.zeros((len(odometry),3))
+    zt=np.zeros((len(odometry),3))
 
     delta[0,0]=initialx
     delta[0,1]=initialy
     delta[0,2]=initialrad
 
-    # calulates time and theta, then applies displacement equations
     for i in range(1,len(odometry)-1):
 
         time=odometry[i+1,0]-odometry[i,0] # executes command from timestamp until next command is issued
         vel=odometry[i,1]
 
-        delta[i,2]=delta[i-1,2]+(odometry[i,2]*time) # theta value
+        delta[i,2]=delta[i-1,2]+(odometry[i,2]*time) # theta value in rad
         delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
         delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
@@ -43,30 +44,32 @@ def odo():
         # ut is the control vector
         # zt is the sensor vector
         # Et is state transition noise
-        # dt is measurement noise
 
-        xt=delta[i-1,:]
-        xt=xt.reshape(-1,1) # row vector to column vector
+        xtvector=delta[i-1,:]
+        xtvector=xtvector.reshape(-1,1) # row vector to column vector
         ut=[vel*np.cos(delta[i,2]),vel*np.sin(delta[i,2]),odometry[i,2]]
         ut=np.asarray(ut) # converts list to array for posterity
         ut=ut.reshape(-1,1) # row to column vector
-        At=np.identity(len(xt))
+        At=np.identity(len(xtvector))
 
-        B=np.zeros((len(xt),len(xt))) # creates change in time matrix
+        B=np.zeros((len(xtvector),len(xtvector))) # creates change in time matrix
         np.fill_diagonal(B,[time])
 
-        sigma=1 # chosen because standard normal distribution
+        covar=1 # chosen because standard normal distribution, sigma =1, 1^2=1
 
-        Et=np.matrix([[np.random.normal(0,sigma)],[np.random.normal(0,sigma)],[np.random.normal(0,sigma)]]) # standard normal distributionfor noise
+        Et=np.matrix([[np.random.normal(0,covar)],[np.random.normal(0,covar)],[np.random.normal(0,covar)]])
+        # standard normal distributionfor noise
+        # will also be used for measurement model (dt)
 
-        mu=np.matmul(At,xt)+np.matmul(B,ut)
-        probxt=np.random.normal(mu,sigma)
+        xtvector=(np.matmul(At,xtvector)+np.matmul(B,ut))+Et
+        xt[i]=xtvector.reshape(1,-1)
+        probxt=np.random.normal(xtvector,covar)
 
-        print probxt
+        ztvector=xtvector+Et
+        zt[i]=ztvector.reshape(1,-1)
+        probzt=np.random.normal(ztvector,covar)
 
-    print probxt
-
-    return delta
+    return [delta,xt]
 
 def plotbarriers():
 
@@ -106,11 +109,13 @@ def plotbarriers():
 
 def main():
 
-    delta=odo()
+    paths=odo()
+    delta=paths[0]
+    hot_trash=paths[1]
     plotbarriers()
-    # plots position data from motion capture
-    p.plot(groundtruth[:,1],groundtruth[:,2],'b-',label='groundtruth')
-    p.plot(delta[:,0],delta[:,1],'g-',label='odometry')
+    p.plot(groundtruth[:100,1],groundtruth[:100,2],'b-',label='groundtruth') # plots position data from motion capture
+    p.plot(delta[:100,0],delta[:100,1],'g-',label='odometry')
+    p.plot(hot_trash[:100,0],hot_trash[:100,1],'r-',label='esitmate')
 
     # creates legend
     p.legend(loc='best')
