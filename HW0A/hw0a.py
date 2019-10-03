@@ -45,13 +45,22 @@ def odo():
         # Et is state transition noise
         # dt is measurement noise
 
-        xt=delta[i,:]
+        xt=delta[i-1,:]
         ut=[vel*np.cos(delta[i,2]),vel*np.sin(delta[i,2]),odometry[i,2]]
         ut=np.asarray(ut) # converts list to array for posterity
         At=np.identity(len(xt))
 
         B=np.zeros((len(xt),len(xt))) # creates change in time matrix
         np.fill_diagonal(B,[time])
+
+        sigma=1 # chosen because standard normal distribution
+
+        Et=np.random.normal(0,sigma) # standard normal distributionfor noise
+
+        mu=(At*xt)+(B*ut)
+        probxt=np.random.normal(mu,sigma)
+
+    print probxt
 
     return delta
 
