@@ -46,8 +46,10 @@ def odo():
         # dt is measurement noise
 
         xt=delta[i-1,:]
+        xt=xt.reshape(-1,1) # row vector to column vector
         ut=[vel*np.cos(delta[i,2]),vel*np.sin(delta[i,2]),odometry[i,2]]
         ut=np.asarray(ut) # converts list to array for posterity
+        ut=ut.reshape(-1,1) # row to column vector
         At=np.identity(len(xt))
 
         B=np.zeros((len(xt),len(xt))) # creates change in time matrix
@@ -55,10 +57,12 @@ def odo():
 
         sigma=1 # chosen because standard normal distribution
 
-        Et=np.random.normal(0,sigma) # standard normal distributionfor noise
+        Et=np.matrix([[np.random.normal(0,sigma)],[np.random.normal(0,sigma)],[np.random.normal(0,sigma)]]) # standard normal distributionfor noise
 
-        mu=(At*xt)+(B*ut)
+        mu=np.matmul(At,xt)+np.matmul(B,ut)
         probxt=np.random.normal(mu,sigma)
+
+        print probxt
 
     print probxt
 
