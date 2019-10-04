@@ -1,7 +1,7 @@
 # Alexander Hay
-# ME_469, HW0, Part A
-# Filtering Algorithms
+# ME_469, HW0, Part A3
 # Dataset 1, Particle Filter
+# Applied Motion Model
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,6 +31,10 @@ def odo():
 
     for i in range(1,len(odometry)-1):
 
+        # ************************************
+        # This section calculates robot's position
+        # from odometry data
+
         time=odometry[i+1,0]-odometry[i,0] # executes command from timestamp until next command is issued
         vel=odometry[i,1]
 
@@ -38,12 +42,17 @@ def odo():
         delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
         delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
-        # xt is the state vector
-        # At is an nxn identity matrix
-        # B is an mxm matrix
-        # ut is the control vector
-        # zt is the sensor vector
-        # Et is state transition noise
+        #**************************************
+        # this section predicts robot's position
+        # this section also needs work. I struggled to apply the vector math correctly
+        # it could just be a plotting error
+
+        # xt - the state vector
+        # At - nxn identity matrix
+        # B  - mxm matrix
+        # ut - control vector
+        # zt - the sensor vector
+        # Et - state transition noise, will also be used for measurement model in place of (dt)
 
         xtvector=delta[i-1,:]
         xtvector=xtvector.reshape(-1,1) # row vector to column vector
@@ -59,24 +68,22 @@ def odo():
 
         Et=np.matrix([[np.random.normal(0,covar)],[np.random.normal(0,covar)],[np.random.normal(0,covar)]])
         # standard normal distributionfor noise
-        # will also be used for measurement model (dt)
 
         xtvector=(np.matmul(At,xtvector)+np.matmul(B,ut))+Et
         xt[i]=xtvector.reshape(1,-1)
         probxt=np.random.normal(xtvector,covar)
 
-        ztvector=xtvector+Et
-        zt[i]=ztvector.reshape(1,-1)
-        probzt=np.random.normal(ztvector,covar)
+        #probzt=np.random.normal(ztvector,covar)
 
     return [delta,xt]
 
 def plotbarriers():
 
-    # plots graph title and axes
-    p.title("Global Position")
+    # plots graph axes
     p.xlabel("x position (m)")
     p.ylabel("y position (m)")
+    p.xlim(-8,10)
+    p.ylim(-7,7)
     p.autoscale=True
 
     # plots landmark positions
@@ -96,6 +103,7 @@ def plotbarriers():
     p.plot([landmark[11,1],landmark[9,1]],[landmark[11,2],landmark[9,2]],'k-') # connects landmarks 17 and 15
     p.plot([landmark[9,1],landmark[4,1]],[landmark[9,2],landmark[4,2]],'k-') # connects landmarks 15 and 10
 
+    # plots island barriers
     p.plot([landmark[10,1],landmark[8,1]],[landmark[10,2],landmark[8,2]],'k-') # connects landmarks 16 and 14
     p.plot([landmark[8,1],landmark[7,1]],[landmark[8,2],landmark[7,2]],'k-') # connects landmarks 14 and 13
 
@@ -113,11 +121,15 @@ def main():
     delta=paths[0]
     hot_trash=paths[1]
     plotbarriers()
-    p.plot(groundtruth[:100,1],groundtruth[:100,2],'b-',label='groundtruth') # plots position data from motion capture
-    p.plot(delta[:100,0],delta[:100,1],'g-',label='odometry')
-    p.plot(hot_trash[:100,0],hot_trash[:100,1],'r-',label='esitmate')
-
-    # creates legend
+    p.title("Robot Odometry vs Ground Truth")
+    p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
+    p.plot(groundtruth[:,1],groundtruth[:,2],'g-',label='Ground Truth') # plots position data from motion capture
+    p.legend(loc='best')
+    plt.figure()
+    plotbarriers()
+    p.title("Robot Odometry vs Dead-Reckoning")
+    p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
+    p.plot(hot_trash[:100,0],hot_trash[:100,1],'r-',label='Dead-Reckoning') # plots position data estimate
     p.legend(loc='best')
 
     p.show()
