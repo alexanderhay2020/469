@@ -39,12 +39,13 @@ p.title("Global x,y Position")
 p.xlabel("x position (m)")
 p.ylabel("y position (m)")
 
-p.plot(xytheta[:,0],xytheta[:,1],'bo',label='robot position')
-p.plot(xy[:,0],xy[:,1],'rx',label='calculated position')
+p.plot(xyland[:,0],xyland[:,1],'rx',label='landmark position')
+p.plot(xytheta[:,0],xytheta[:,1],'go',label='robot position')
+p.plot(xy[:,0],xy[:,1],'bo',label='calculated position')
 
 for i in range(len(xy)):
     p.annotate(str(i),#[:-2], # coordinate label
-    (xy[i,0],xy[i,1]), # coordinates for label
+    (xyland[i,0],xyland[i,1]), # coordinates for label
     textcoords="offset points", # how to position text
     xytext=(-4,-10), # distance from text to points (x,y)
     ha='center') # horizontal adjustment; left, right, or center
@@ -54,6 +55,13 @@ for i in range(len(xy)):
     textcoords="offset points", # how to position text
     xytext=(-4,-10), # distance from text to points (x,y)
     ha='center') # horizontal adjustment; left, right, or center
+
+    p.annotate(str(i),#[:-2], # coordinate label
+    (xy[i,0],xy[i,1]), # coordinates for label
+    textcoords="offset points", # how to position text
+    xytext=(-4,-10), # distance from text to points (x,y)
+    ha='center') # horizontal adjustment; left, right, or center
+
 
 p.legend(loc='best')
 
