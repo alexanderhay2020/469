@@ -22,8 +22,8 @@ def odo():
 
     # 2D array to hold calculated x, y, and theta values
     delta=np.zeros((len(odometry),3))
-    xt=np.zeros((len(odometry),3))
-    zt=np.zeros((len(odometry),3))
+    #xt=np.zeros((len(odometry),3))
+    #zt=np.zeros((len(odometry),3))
 
     delta[0,0]=initialx
     delta[0,1]=initialy
@@ -42,40 +42,7 @@ def odo():
         delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
         delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
-        #**************************************
-        # this section predicts robot's position
-        # this section also needs work. I struggled to apply the vector math correctly
-        # it could just be a plotting error
-
-        # xt - the state vector
-        # At - nxn identity matrix
-        # B  - mxm matrix
-        # ut - control vector
-        # zt - the sensor vector
-        # Et - state transition noise, will also be used for measurement model in place of (dt)
-
-        xtvector=delta[i-1,:]
-        xtvector=xtvector.reshape(-1,1) # row vector to column vector
-        ut=[vel*np.cos(delta[i,2]),vel*np.sin(delta[i,2]),odometry[i,2]]
-        ut=np.asarray(ut) # converts list to array for posterity
-        ut=ut.reshape(-1,1) # row to column vector
-        At=np.identity(len(xtvector))
-
-        B=np.zeros((len(xtvector),len(xtvector))) # creates change in time matrix
-        np.fill_diagonal(B,[time])
-
-        covar=1 # chosen because standard normal distribution, sigma =1, 1^2=1
-
-        Et=np.matrix([[np.random.normal(0,covar)],[np.random.normal(0,covar)],[np.random.normal(0,covar)]])
-        # standard normal distributionfor noise
-
-        xtvector=(np.matmul(At,xtvector)+np.matmul(B,ut))+Et
-        xt[i]=xtvector.reshape(1,-1)
-        probxt=np.random.normal(xtvector,covar)
-
-        #probzt=np.random.normal(ztvector,covar)
-
-    return [delta,xt]
+    return [delta]
 
 def plotbarriers():
 
@@ -119,17 +86,10 @@ def main():
 
     paths=odo()
     delta=paths[0]
-    hot_trash=paths[1]
     plotbarriers()
     p.title("Robot Odometry vs Ground Truth")
     p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
     p.plot(groundtruth[:,1],groundtruth[:,2],'g-',label='Ground Truth') # plots position data from motion capture
-    p.legend(loc='best')
-    plt.figure()
-    plotbarriers()
-    p.title("Robot Odometry vs Dead-Reckoning")
-    p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
-    p.plot(hot_trash[:100,0],hot_trash[:100,1],'r-',label='Dead-Reckoning') # plots position data estimate
     p.legend(loc='best')
 
     p.show()
