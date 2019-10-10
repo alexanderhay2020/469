@@ -58,12 +58,10 @@ def pt2():
 # applied motion model
 def pt3():
 
-    def odo2():
+    def odo():
 
         # 2D array to hold calculated x, y, and theta values
         delta=np.zeros((len(odometry),3))
-        #xt=np.zeros((len(odometry),3))
-        #zt=np.zeros((len(odometry),3))
 
         delta[0,0]=initialx
         delta[0,1]=initialy
@@ -83,6 +81,8 @@ def pt3():
             delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
         return [delta]
+
+    #def filter():
 
     def plotbarriers():
 
@@ -124,8 +124,7 @@ def pt3():
 
     def main():
 
-        paths=odo2()
-        delta=paths[0]
+        [delta]=odo()
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
