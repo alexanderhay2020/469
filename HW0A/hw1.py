@@ -18,10 +18,10 @@ odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured
 # if we assumed t0=0 and that the frequency of sampling is even, the time steps of t0-t1 nad t1-t2 would be significantly different
 # so all initial values given are gathered from the complete dataset, using the index of where our datasets start minus one.
 # the origin is assumed to be known, again used the previous time frame's location data
-initialt = 1288971842.041
-initialx = 0.98038490
-initialy = -4.99232180
-initialrad = 1.44849633
+initial_t = 1288971842.041
+initial_x = 0.98038490
+initial_y = -4.99232180
+initial_theta = 1.44849633
 t_step = 0  # keeps track of which time sample we last had (t i-1)
 theta_step = 0
 x_step = 0
@@ -83,9 +83,9 @@ def pt3():
     #     # 2D array to hold calculated state x, y, and theta values
     #     xt = np.zeros((len(odometry), 3))
     #
-    #     xt[0, 0] = initialx
-    #     xt[0, 1] = initialy
-    #     xt[0, 2] = initialrad
+    #     xt[0, 0] = initial_x
+    #     xt[0, 1] = initial_y
+    #     xt[0, 2] = initial_theta
     #
     #     for i in range(1, len(odometry)-1):
     #
@@ -126,8 +126,9 @@ def pt3():
     # this function should be looped
     def motion_model(ut): # control vector is the 1x3 odometry data [time, velocity, angular velocity]
 
-        # calls for initialt to calibrate t0
+        # calls for initial_t to calibrate t0
         # t_step needs to be stored outside of the function, otherwise it resets
+        # theta_step is the same
         # control vector is parsed into time
         # control vector is parsed into velocity
         # control vector is parsed into angular velocity
@@ -140,10 +141,18 @@ def pt3():
         # calculates robot's x position
         # calculates robot's y position
 
+        # saves theta for next state
+        # saves x for next state
+        # saves y for next state
+
         # returns 1x3 state model [theta, x, y]
 
-        global initialt
+        global initial_t
         global t_step
+        global theta_step
+        global x_step
+        global y_step
+
         t = ut[0]
         v = ut[1]
         w = ut[2]
@@ -151,19 +160,23 @@ def pt3():
 
         if t == 1288971842.161:
             t_step = t
-            delta_t = t_step - initialt
+            delta_t = t_step - initial_t
             theta_step = 1.44859633
             deltatheta = theta_step - initial_theta
-            x_step = initialx
-            y_step = initialy
+            x_step = initial_x
+            y_step = initial_y
         else:
             delta_t = t - t_step
-            delta_theta = theta-theta_step
 
-        xt[0] = theta_step + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
-        xt[1] = x_step + (v * np.cos(xt[0]) * delta_t) # finds x location x=v*cos(theta)*t
-        xt[2] = y_step + (v * np.sin(xt[0]) * delta_t) # finds y location x=v*sin(theta)*t
+        xt[0,0] = theta_step + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
+        xt[0,1] = x_step + (v * np.cos(xt[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
+        xt[0,2] = y_step + (v * np.sin(xt[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
 
+        theta_step = xt[0,0]
+        x_step = xt[0,1]
+        y_step = xt[0,2]
+
+        print xt[0,1]
         return [xt] # returns 1x3 array vector [theta, x, y]
 
     # this function should be looped
@@ -196,8 +209,8 @@ def pt3():
         landmark_ydev = landmark[index,4]
 
         zt = np.zeros((1,2))
-        zt[0] = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
-        zt[1] = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
+        zt[0,0] = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
+        zt[0,1] = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
 
         return (zt)
 
@@ -259,7 +272,9 @@ def pt3():
         delta=np.zeros((len(odometry),3))
 
         for i in range(len(odometry)):
-            delta[i,:] = motion_model(odometry[i,:])
+            ut=odometry[i,:]
+            delta[i] = motion_model(ut)
+
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         # plots position data derived from odometry readings
@@ -332,27 +347,27 @@ def pt6():
 
 
 def main():
-
-    print 'Enter exercise to be graded'
-    print '2, 3, or 6'
-
-    while True:
-        input = raw_input()
-        try:
-            input = int(input)
-            if int(input) == 2:
-                pt2()
-                break
-            elif int(input) == 3:
-                pt3()
-                break
-            elif int(input) == 6:
-                pt6()
-                break
-            elif int(input) != 2 or int(input) != 3 or int(input) != 6:
-                print 'Not a valid entry, re-enter exercise to be graded'
-        except ValueError:
-            print 'Not a valid entry, re-enter exercise to be graded'
+    pt3()
+    # print 'Enter exercise to be graded'
+    # print '2, 3, or 6'
+    #
+    # while True:
+    #     input = raw_input()
+    #     try:
+    #         input = int(input)
+    #         if int(input) == 2:
+    #             pt2()
+    #             break
+    #         elif int(input) == 3:
+    #             pt3()
+    #             break
+    #         elif int(input) == 6:
+    #             pt6()
+    #             break
+    #         elif int(input) != 2 or int(input) != 3 or int(input) != 6:
+    #             print 'Not a valid entry, re-enter exercise to be graded'
+    #     except ValueError:
+    #         print 'Not a valid entry, re-enter exercise to be graded'
 
 
 main()
