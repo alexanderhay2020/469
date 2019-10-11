@@ -42,6 +42,8 @@ def odo():
         delta[i,0]=delta[i-1,0]+vel*np.cos(delta[i,2])*time # finds x displacement (m) x=v*cos(theta)*t
         delta[i,1]=delta[i-1,1]+vel*np.sin(delta[i,2])*time # finds y displacement (m) x=v*sin(theta)*t
 
+
+
     return [delta]
 
 def plotbarriers():
@@ -86,6 +88,7 @@ def main():
 
     paths=odo()
     delta=paths[0]
+    print delta
     plotbarriers()
     p.title("Robot Odometry vs Ground Truth")
     p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings

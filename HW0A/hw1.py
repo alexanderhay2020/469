@@ -18,14 +18,15 @@ odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured
 # if we assumed t0=0 and that the frequency of sampling is even, the time steps of t0-t1 nad t1-t2 would be significantly different
 # so all initial values given are gathered from the complete dataset, using the index of where our datasets start minus one.
 # the origin is assumed to be known, again used the previous time frame's location data
-initial_t = 1288971842.041
+t = 1288971842.041
 initial_x = 0.98038490
 initial_y = -4.99232180
 initial_theta = 1.44849633
-t_step = 0  # keeps track of which time sample we last had (t i-1)
-theta_step = 0
-x_step = 0
-y_step = 0
+
+xt=np.zeros([1,3])
+xt[0,0]=initial_theta
+xt[0,1]=initial_x
+xt[0,2]=initial_y
 
 # -------------- motion model--------------------
 # --------- part 2 of the homework---------------
@@ -121,21 +122,24 @@ def pt3():
         for i in range(3):
             xp[:, i] = np.random.normal(mu, sig, 1000)
 
-        return [xp]
+        return xp
 
     # this function should be looped
-    def motion_model(ut): # control vector is the 1x3 odometry data [time, velocity, angular velocity]
+    def motion_model(xt0,ut):
+        # state vector is 1x3 array vector [theta, x, y]
+        # control vector is the 1x3 odometry data [time, velocity, angular velocity]
 
-        # calls for initial_t to calibrate t0
-        # t_step needs to be stored outside of the function, otherwise it resets
-        # theta_step is the same
-        # control vector is parsed into time
-        # control vector is parsed into velocity
-        # control vector is parsed into angular velocity
+        # calls global t, time in the world at previous step
+        # ti is defined as previous step's time`
+
+        # control vector is parsed as current time
+        # control vector is parsed as current velocity
+        # control vector is parsed as current angular velocity
+
+        # delta t defined as difference between previous time and current time
+        # theta at previous state
+        # x at previous state
         # creates array vector [theta, x, y]
-        # if we're at the first cell in the data, we initialize the time steps and delta t
-        # theta was taken at last measurement before t=1288971842.161 from Groundtruth.dat
-        # otherwise we just carry on SOP`
 
         # calculates robot's orientation
         # calculates robot's x position
@@ -147,37 +151,31 @@ def pt3():
 
         # returns 1x3 state model [theta, x, y]
 
-        global initial_t
-        global t_step
-        global theta_step
-        global x_step
-        global y_step
+        global t # this is how I get around t0 not being 0
+        ti=t # ti is the timestamp of the previous step
 
         t = ut[0]
         v = ut[1]
         w = ut[2]
+
+        delta_t = t-ti # time passed is previous time minus current time
+        xt0_theta = xt0[0]
+        xt0_x = xt0[1]
+        xt0_y = xt0[2]
+
         xt = np.zeros((1, 3))
 
-        if t == 1288971842.161:
-            t_step = t
-            delta_t = t_step - initial_t
-            theta_step = 1.44859633
-            deltatheta = theta_step - initial_theta
-            x_step = initial_x
-            y_step = initial_y
-        else:
-            delta_t = t - t_step
-
-        xt[0,0] = theta_step + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
-        xt[0,1] = x_step + (v * np.cos(xt[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
-        xt[0,2] = y_step + (v * np.sin(xt[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
+        xt[0,0] = xt0_theta + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
+        xt[0,1] = xt0_x + (v * np.cos(xt[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
+        xt[0,2] = xt0_y + (v * np.sin(xt[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
 
         theta_step = xt[0,0]
         x_step = xt[0,1]
         y_step = xt[0,2]
 
-        print xt[0,1]
-        return [xt] # returns 1x3 array vector [theta, x, y]
+        # print xt
+        # print ut
+        return xt # returns 1x3 vector array [theta, x, y]
 
     # this function should be looped
     def sensor_model(xt, id): # 1x3 state model [theta, x, y]; landmark ID
@@ -212,7 +210,7 @@ def pt3():
         zt[0,0] = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
         zt[0,1] = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
 
-        return (zt)
+        return zt
 
     def plotbarriers():
 
@@ -269,16 +267,17 @@ def pt3():
 
     def main():
 
-        delta=np.zeros((len(odometry),3))
+        global xt # calls current state vector
 
         for i in range(len(odometry)):
-            ut=odometry[i,:]
-            delta[i] = motion_model(ut)
+            ut=odometry[i,:] # gets current odometry reading
+            xti=motion_model(xt[i,:],ut) # passes xt, ut, to the motion model. motion model returns 1x3 array
+            xt=np.append(xt,xti,axis=0)
 
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         # plots position data derived from odometry readings
-        p.plot(delta[:, 0], delta[:, 1], 'b-', label='Robot Odometry')
+        p.plot(xt[:, 1], xt[:, 2], 'b-', label='Robot Odometry')
         # plots position data from motion capture
         p.plot(groundtruth[:, 1], groundtruth[:, 2],
                'g-', label='Ground Truth')
