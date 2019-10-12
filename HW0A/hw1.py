@@ -14,20 +14,15 @@ landmark = np.loadtxt('ds1_Landmark_Groundtruth.dat')  # landmark data
 measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
 odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
-# since the datasets for the assignments have been truncated and don't start at time t0, it needed to be 'calibrated'
-# if we assumed t0=0 and that the frequency of sampling is even, the time steps of t0-t1 nad t1-t2 would be significantly different
-# so all initial values given are gathered from the complete dataset, using the index of where our datasets start minus one.
-# the origin is assumed to be known, again used the previous time frame's location data
 t = 1288971842.041
 initial_theta = 1.44849633
 initial_x = 0.98038490
 initial_y = -4.99232180
-mu = [initial_theta, initial_x, initial_y] # initializes mu for particle generation
 
-xt = np.zeros([1,3])
-xt[0,0] = initial_theta
-xt[0,1] = initial_x
-xt[0,2] = initial_y
+# since the datasets for the assignments have been truncated and don't start at time t0, it needed to be 'calibrated'
+# if we assumed t0=0 and that the frequency of sampling is even, the time steps of t0-t1 nad t1-t2 would be significantly different
+# so all initial values given are gathered from the complete dataset, using the index of where our datasets start minus one.
+# the origin is assumed to be known, again used the previous time frame's location data
 
 # -------------- motion model--------------------
 # --------- part 2 of the homework---------------
@@ -97,7 +92,7 @@ def pt3():
         sig = 1
         xp = np.empty([m, 3], dtype=float)
         for i in range(3):
-            xp[:, i] = np.random.normal(mu[i], sig, 1000)
+            xp[:,i] = np.random.normal(mu[0,i], sig, m)
 
         return xp
 
@@ -163,7 +158,7 @@ def pt3():
         return xti # returns 1x3 vector array [theta, x, y]
 
     # this function should be looped
-    def sensor_model(zt, id): # asks for xt [theta, x, y], id of landmark; returns new state vector zt [theta, x, y]
+    def sensor_model(xt,id): # asks for xt [theta, x, y], id of landmark; returns new state vector xt [theta, x, y]
 
         # robot state vector is parsed into theta
         # robot state vector is parsed into x position
@@ -189,21 +184,25 @@ def pt3():
         xi_x = xt[0,1]
         xi_y = xt[0,2]
         id=id-6
+
         landmark_x = landmark[id,1]
         landmark_y = landmark[id,2]
         landmark_xdev = landmark[id,3]
         landmark_ydev = landmark[id,4]
 
-        xti = np.zeros((1,3))
+        xts = np.zeros((1,3))
+        zt = np.zeros((1,2))
+        zt = np.array([pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5),
+                        math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta])
 
-        zt_r = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
-        zt_phi = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
+        # zt_r=zt[2]
+        # zt_phi=zt[3]
+        #
+        # xts[0,0] = xi_theta
+        # xts[0,1] = xi_x + (zt_r * np.cos(zt_phi + xi_theta))
+        # xts[0,2] = xi_y + (zt_r * np.sin(zt_phi + xi_theta))
 
-        xti[0,0] = xi_theta
-        xti[0,1] = xi_x + (zt_r * np.cos(zt_phi + xi_theta))
-        xti[0,2] = xi_y + (zt_r * np.sin(zt_phi + xi_theta))
-
-        return xti # returns state model [theta, x, y]
+        return zt # returns sensor model [range, bearing]
 
     #def error(mu, covar):
 
@@ -267,77 +266,74 @@ def pt3():
 
     def filter():
 
-        #global t
-        global xt # calls current state vector
-        global xt2
-        global mu # calls mu
+        global initial_theta
+        global initial_x
+        global initial_y
 
-        #xp=particles(mu,1000) # sampling
-        #w=()
+        m = 1000 # number of particles
 
-        # for i in range(len(mu)):
-        #     ut=odometry[i,:]
-        #     xti=motion_model(xt[i,:],ut) # xpi is a 3vector
-        #     zti=sensor_model(xt[i,:],measurement[i,1])
-        #     # calculcate weights
+        xt = np.array([[initial_theta, initial_x, initial_y]]) # initializes first state
+        xp = particles(xt,m) # sampling
+        weights = np.zeros((m,2))
 
-        plotbarriers()
-        p.title("Particle Initialization")
-        # plots position data derived from odometry readings
-        # p.scatter(xp[:, 1], xp[:, 2])
-
-        # measurement step
         index = 1 #index of measurement data
 
         for i in range(1,len(odometry)):
-        #for i in range (1,2000):
+        #for i in range(2000):
+            # measurement step
             ut = odometry[i,:] # gets current odometry reading [t, v, w]
+            xti = xt[-1,:][np.newaxis]
+            xti = motion_model(xti,ut) # passes xt, ut, to the motion model. motion model returns 1x3 array xti [theta, x, y]
+            xt = np.append(xt,xti,axis=0)
 
-            # check to see if robot moved at all
-            #if ut[1] != 0 or ut[2] != 0: # checks if robot has moved
-
-            xti=xt[-1,:][np.newaxis]
-            xti=motion_model(xti,ut) # passes xt, ut, to the motion model. motion model returns 1x3 array xti [theta, x, y]
-
-
-            # checks to see if more than 1 reading took place
+            # sensor step, checks for more than one reading
             if t >= measurement[index,0]:
-                zt = measurement[index,:]
-                while measurement[index-1,0] == measurement[index,0]:
-                    zt = np.append(zt,measurement[index,:],axis=0)
-                    index = index + 1
+                zt = measurement[index,:] # gets current sensor data []
+
+                # this would weigh diffent measurements taken at the same time, rather than the last one
+                # while measurement[index-1,0] == measurement[index,0]:
+                #     zt = np.append(zt,measurement[index,:],axis=0)
+                #     index = index + 1
+
                 index = index + 1
 
+                # I don't think this block needs to be here but it's a work around
                 if index==len(measurement): # stops loop
                     break
 
-                # should have xti, ut, and zt
+                id = int(zt[1])
+                id = np.where(barcodes == id)
+                id = id[0]
+                id = int(id[0])
+                id = int(barcodes[id,0])
+
+                # this is where we guess sensor data
+                zt_estimate = sensor_model(xt,id) # [range, bearing]
+
+                # we have xt, ut, zt, and zt_estimate
+
+                # sets the weight for each particle, normalized
+                for i_2 in range(len(weights)):
+                    # ztw = np.array(([zt[2],zt[3]])) # gets range, bearing data from zt
+                    # weights[i_2,:]=(1/abs(ztw-zt_estimate))/m
+                    diff_range = abs(zt[2] - zt_estimate[0])
+                    diff_bear = abs(zt[3] - zt_estimate[1])
+                    weights[i_2]=[(1/diff_range)*m,(1/diff_bearing)*m]
 
 
-                #print 'xt: ' + str(xt)
-                # print 'ut: ' + str(ut)
-                # print 'zt: ' + str(zt)
+            best = np.where(weights == np.amax(weights,axis=0))
+            new_range = best[0]
+            new_range = new_range[0]
+            new_bear = best[1]
+            new_bear = new_bear[0]
 
-            # print 'this is xti type: ' + str(type(xti))
-            # print 'this is xti shape: ' + str(xti.shape)
-        for i in range(len(measurement)):
-            #print i
-            id = int(measurement[i,1])
-            #print 'barcode #: ' + str(id)
-            id = np.where(barcodes == id)
-            #print 'barcode index retrun: {0}'.format(id)
-            id = id[0]
-            #print 'tuple index: ' + str(id)
-            id = int(id[0])
-            #print 'final index: ' + str(id)
-            id = int(barcodes[id,0])
-            #print 'index value: ' + str(id)
+            
+
 
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         # plots position data derived from odometry readings
         p.plot(xt[:,1], xt[:,2], 'b-', label='Robot Odometry')
-        #p.plot(xt[:, 1], xt[:, 2], 'r-', label='Sensor Added')
         # plots position data from motion capture
         #p.plot(groundtruth[:, 1], groundtruth[:, 2],'g-', label='Ground Truth')
         p.legend(loc='best')
