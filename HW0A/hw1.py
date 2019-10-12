@@ -19,14 +19,16 @@ odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured
 # so all initial values given are gathered from the complete dataset, using the index of where our datasets start minus one.
 # the origin is assumed to be known, again used the previous time frame's location data
 t = 1288971842.041
+initial_theta = 1.44849633
 initial_x = 0.98038490
 initial_y = -4.99232180
-initial_theta = 1.44849633
+mu = [initial_theta, initial_x, initial_y] # initializes mu for particle generation
 
-xt=np.zeros([1,3])
-xt[0,0]=initial_theta
-xt[0,1]=initial_x
-xt[0,2]=initial_y
+xt = np.zeros([1,3])
+xt2 = np.zeros([1,3])
+xt[0,0] = initial_theta
+xt[0,1] = initial_x
+xt[0,2] = initial_y
 
 # -------------- motion model--------------------
 # --------- part 2 of the homework---------------
@@ -103,7 +105,7 @@ def pt3():
     #
     #     return [xt]
 
-    def particles(mu,m):
+    def particles(mu,m): # asks for mu [list of means], m (number of particles); returns mx3 array [theta, x, y] of randomly distributed numbers
 
         # creates  random points of data around the mean and std dev
         # for this exercise, mu is the state at t0, sigma is 1 but is tunable
@@ -120,12 +122,12 @@ def pt3():
         sig = 1
         xp = np.empty([m, 3], dtype=float)
         for i in range(3):
-            xp[:, i] = np.random.normal(mu, sig, 1000)
+            xp[:, i] = np.random.normal(mu[i], sig, 1000)
 
         return xp
 
     # this function should be looped
-    def motion_model(xt0,ut):
+    def motion_model(xt,ut): # asks for xt [theta, x, y], control vectors [t, v ,w]; returns state vector [theta, x ,y]
         # state vector is 1x3 array vector [theta, x, y]
         # control vector is the 1x3 odometry data [time, velocity, angular velocity]
 
@@ -159,26 +161,26 @@ def pt3():
         w = ut[2]
 
         delta_t = t-ti # time passed is previous time minus current time
-        xt0_theta = xt0[0]
-        xt0_x = xt0[1]
-        xt0_y = xt0[2]
+        xt_theta = xt[0,0]
+        xt_x = xt[0,1]
+        xt_y = xt[0,2]
 
-        xt = np.zeros((1, 3))
+        xti = np.zeros((1, 3))
 
-        xt[0,0] = xt0_theta + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
-        xt[0,1] = xt0_x + (v * np.cos(xt[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
-        xt[0,2] = xt0_y + (v * np.sin(xt[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
+        xti[0,0] = xt_theta + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
+        xti[0,1] = xt_x + (v * np.cos(xti[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
+        xti[0,2] = xt_y + (v * np.sin(xti[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
 
-        theta_step = xt[0,0]
-        x_step = xt[0,1]
-        y_step = xt[0,2]
+        # theta_step = xti[0,0]
+        # x_step = xti[0,1]
+        # y_step = xti[0,2]
 
         # print xt
         # print ut
-        return xt # returns 1x3 vector array [theta, x, y]
+        return xti # returns 1x3 vector array [theta, x, y]
 
     # this function should be looped
-    def sensor_model(xt, id): # 1x3 state model [theta, x, y]; landmark ID
+    def sensor_model(xt, id): # asks for xt [theta, x, y], id of landmark; returns new state vector zt [theta, x, y]
 
         # robot state vector is parsed into theta
         # robot state vector is parsed into x position
@@ -195,22 +197,32 @@ def pt3():
         # calculates range - sqrt((xt-xi)^2 + (yt-yi)^2)
         # calculates bearing - arctan((yi-yt)/(xi-xt)) - theta
 
-        # returns 1x2 sensor model [range, bearing]
+        # calculates new x; x = xi + r*cos(phi+theta)
+        # calculates new y; y = yi + r*sin(phi+theta)
 
-        xi_theta = xt[0]
-        xi_x = xt[1]
-        xi_y = xt[2]
-        index=id-6
-        landmark_x = landmark[index,1]
-        landmark_y = landmark[index,2]
-        landmark_xdev = landmark[index,3]
-        landmark_ydev = landmark[index,4]
+        # returns 1x3 state model [theta, x, y]
 
-        zt = np.zeros((1,2))
-        zt[0,0] = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
-        zt[0,1] = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
+        xi_theta = xt[0,0]
+        xi_x = xt[0,1]
+        xi_y = xt[0,2]
+        id=id-6
+        landmark_x = landmark[id,1]
+        landmark_y = landmark[id,2]
+        landmark_xdev = landmark[id,3]
+        landmark_ydev = landmark[id,4]
 
-        return zt
+        zt = np.zeros((1,3))
+
+        zt_r = pow(pow(xi_x - landmark_x, 2) + pow(xi_y - landmark_y, 2), 0.5)
+        zt_phi = math.atan2((landmark_y - xi_y), (landmark_x - xi_x)) - xi_theta
+
+        zt[0,0] = xi_theta
+        zt[0,1] = xi_x + (zt_r * np.cos(zt_phi + xi_theta))
+        zt[0,2] = xi_y + (zt_r * np.sin(zt_phi + xi_theta))
+
+        return zt # returns state model [theta, x, y]
+
+    #def error(mu, covar):
 
     def plotbarriers():
 
@@ -265,27 +277,79 @@ def pt3():
                        xytext=(7, 10),  # distance from text to points (x,y)
                        ha='center')  # horizontal adjustment; left, right, or center
 
-    def main():
+    #def weights(xtm): # asks for state of particle m, returns set of weights
 
+
+    #return w
+
+    def filter():
+
+        global t
         global xt # calls current state vector
+        global xt2
+        global mu # calls mu
 
-        for i in range(len(odometry)):
-            ut=odometry[i,:] # gets current odometry reading
-            xti=motion_model(xt[i,:],ut) # passes xt, ut, to the motion model. motion model returns 1x3 array
-            xt=np.append(xt,xti,axis=0)
+        #xp=particles(mu,1000) # sampling
+        #w=()
+
+        # for i in range(len(mu)):
+        #     ut=odometry[i,:]
+        #     xti=motion_model(xt[i,:],ut) # xpi is a 3vector
+        #     zti=sensor_model(xt[i,:],measurement[i,1])
+        #     # calculcate weights
+
+        plotbarriers()
+        p.title("Particle Initialization")
+        # plots position data derived from odometry readings
+        # p.scatter(xp[:, 1], xp[:, 2])
+
+        # measurement step
+        for i in range(1,len(odometry)):
+            ut=odometry[i,:] # gets current odometry reading [t, v, w]
+            t=ut[0]
+            if ut[1] != odometry[i-1,1] and ut[2] != odometry[i-1,2]: # checks if robot moved at all
+                xti=motion_model(xt,ut) # passes xt, ut, to the motion model. motion model returns 1x3 array
+                xt=np.append(xt,xti,axis=0)
+            if t =
+            # check for measurement
+
+            # print 'this is xti type: ' + str(type(xti))
+            # print 'this is xti shape: ' + str(xti.shape)
+            # print
+            #xt=np.append(xt,xti,axis=0)
+        for i in range(len(measurement)):
+            #print i
+            id=int(measurement[i,1])
+            #print 'barcode #: ' + str(id)
+            id=np.where(barcodes==id)
+            #print 'barcode index retrun: {0}'.format(id)
+            id=id[0]
+            #print 'tuple index: ' + str(id)
+            id=int(id[0])
+            #print 'final index: ' + str(id)
+            id=int(barcodes[id,0])
+            #print 'index value: ' + str(id)
+            #xti=sensor_model(xti,id)
+
+            #xp=np.append(xp,xpi,axis=0)
+            # print 'this is xti type: ' + str(type(xti))
+            # print 'this is xti shape: ' + str(xti.shape)
+            # print 'this is xt2 type: ' + str(type(xt2))
+            # print 'this is xt2 shape: ' + str(xt2.shape)
+            #xt2=np.append(xt2,xti,axis=0)
 
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         # plots position data derived from odometry readings
         p.plot(xt[:, 1], xt[:, 2], 'b-', label='Robot Odometry')
+        #p.plot(xt[:, 1], xt[:, 2], 'r-', label='Sensor Added')
         # plots position data from motion capture
-        p.plot(groundtruth[:, 1], groundtruth[:, 2],
-               'g-', label='Ground Truth')
+        #p.plot(groundtruth[:, 1], groundtruth[:, 2],'g-', label='Ground Truth')
         p.legend(loc='best')
 
         p.show()
 
-    main()
+    filter()
 
 # ------------- measurement model----------------
 # ---------- part 6 of the homework--------------
