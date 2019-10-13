@@ -6,6 +6,7 @@
 import numpy as np
 import pylab as p
 import math
+import random
 
 # global variables
 barcodes = np.loadtxt('ds1_Barcodes.dat')
@@ -117,10 +118,6 @@ def pt3():
         # calculates robot's x position
         # calculates robot's y position
 
-        # saves theta for next state
-        # saves x for next state
-        # saves y for next state
-
         # returns 1x3 state model [theta, x, y]
 
         global t # this is how I get around t0 not being 0
@@ -137,24 +134,11 @@ def pt3():
         xt_y = xt[0,2]
 
         xti = np.zeros((1, 3))
-        # print xt[0]
-        # print xt[1]
-        # print xt[2]
-        # print
+
         xti[0,0] = xt_theta + (w * delta_t) # theta = previous theta + new theta (angular velocity * time)
-        # print xti[0,0]
         xti[0,1] = xt_x + (v * np.cos(xti[0,0]) * delta_t) # finds x location x=v*cos(theta)*t
-        # print xti[0,1]
         xti[0,2] = xt_y + (v * np.sin(xti[0,0]) * delta_t) # finds y location x=v*sin(theta)*t
-        # print xti[0,2]
-        # print
-        # print
 
-        # theta_step = xti[0,0]
-        # x_step = xti[0,1]
-        # y_step = xti[0,2]
-
-        # print ut
         return xti # returns 1x3 vector array [theta, x, y]
 
     # this function should be looped
@@ -206,63 +190,17 @@ def pt3():
 
     #def error(mu, covar):
 
-    def plotbarriers():
+    def sampler(xp,wt): # low variance resampling; asks for weight information, returns xt_hat []
+        xp_hat=np.empty((len(wt),3))
+        r = random.randint(1,len(wt))
+        c=wt[0]
+        for i in range(len(wt)):
+            u = r + (i - 1)*(len(wt) - 1)
+            while u > c:
+                c = c + wt[i]
+            xp_hat[i] = xp[i]
 
-        # plots graph axes
-        p.xlabel("x position (m)")
-        p.ylabel("y position (m)")
-        p.xlim(-8, 10)
-        p.ylim(-7, 7)
-        p.autoscale = True
-
-        # plots landmark positions
-        p.plot(landmark[:, 1], landmark[:, 2], 'ro')
-
-        # plots barriers
-        p.plot([landmark[1, 1], landmark[4, 1]], [landmark[1, 2],
-                                                  landmark[4, 2]], 'k-')  # connects landmarks 7 and 10
-        p.plot([landmark[4, 1], landmark[3, 1]], [landmark[4, 2],
-                                                  landmark[3, 2]], 'k-')  # connects landmarks 10 and 9
-        p.plot([landmark[3, 1], landmark[0, 1]], [landmark[3, 2],
-                                                  landmark[0, 2]], 'k-')  # connects landmarks 9 and 6
-        p.plot([landmark[0, 1], landmark[2, 1]], [landmark[0, 2],
-                                                  landmark[2, 2]], 'k-')  # connects landmarks 6 and 8
-        p.plot([landmark[2, 1], landmark[5, 1]], [landmark[2, 2],
-                                                  landmark[5, 2]], 'k-')  # connects landmarks 8 and 11
-        p.plot([landmark[5, 1], landmark[6, 1]], [landmark[5, 2],
-                                                  landmark[6, 2]], 'k-')  # connects landmarks 11 and 12
-        p.plot([landmark[6, 1], landmark[14, 1]], [landmark[6, 2],
-                                                   landmark[14, 2]], 'k-')  # connects landmarks 12 and 20
-        p.plot([landmark[14, 1], landmark[13, 1]], [landmark[14, 2],
-                                                    landmark[13, 2]], 'k-')  # connects landmarks 20 and 19
-        p.plot([landmark[13, 1], landmark[12, 1]], [landmark[13, 2],
-                                                    landmark[12, 2]], 'k-')  # connects landmarks 19 and 18
-        p.plot([landmark[12, 1], landmark[11, 1]], [landmark[12, 2],
-                                                    landmark[11, 2]], 'k-')  # connects landmarks 18 and 17
-        p.plot([landmark[11, 1], landmark[9, 1]], [landmark[11, 2],
-                                                   landmark[9, 2]], 'k-')  # connects landmarks 17 and 15
-        p.plot([landmark[9, 1], landmark[4, 1]], [landmark[9, 2],
-                                                  landmark[4, 2]], 'k-')  # connects landmarks 15 and 10
-
-        # plots island barriers
-        p.plot([landmark[10, 1], landmark[8, 1]], [landmark[10, 2],
-                                                   landmark[8, 2]], 'k-')  # connects landmarks 16 and 14
-        p.plot([landmark[8, 1], landmark[7, 1]], [landmark[8, 2],
-                                                  landmark[7, 2]], 'k-')  # connects landmarks 14 and 13
-
-        # plots landmark annotations
-        for i in range(len(landmark)):
-            p.annotate(str(landmark[i, 0])[:-2],  # landmark # label
-                       # landmark coordinates for label
-                       (landmark[i, 1], landmark[i, 2]),
-                       textcoords="offset points",  # how to position text
-                       xytext=(7, 10),  # distance from text to points (x,y)
-                       ha='center')  # horizontal adjustment; left, right, or center
-
-    #def weights(xtm): # asks for state of particle m, returns set of weights
-
-
-    #return w
+        return xp_hat
 
     def filter():
 
@@ -273,24 +211,28 @@ def pt3():
         m = 1000 # number of particles
 
         xt = np.array([[initial_theta, initial_x, initial_y]]) # initializes first state
-        xp = particles(xt,m) # sampling
-        weights = np.zeros((m,2))
+        xp = particles(xt,m) # particle generation
 
         index = 1 #index of measurement data
 
         for i in range(1,len(odometry)):
-        #for i in range(2000):
+        #for i in range(1,200):
+
             # measurement step
             ut = odometry[i,:] # gets current odometry reading [t, v, w]
             xti = xt[-1,:][np.newaxis]
             xti = motion_model(xti,ut) # passes xt, ut, to the motion model. motion model returns 1x3 array xti [theta, x, y]
+
             xt = np.append(xt,xti,axis=0)
 
             # sensor step, checks for more than one reading
             if t >= measurement[index,0]:
                 zt = measurement[index,:] # gets current sensor data []
-
-                # this would weigh diffent measurements taken at the same time, rather than the last one
+                for loop in range(len(xp)):
+                    xpi=xp[loop][np.newaxis]
+                    xpi=motion_model(xpi,ut)
+                    xp[loop]=xpi
+                # this would weigh different measurements taken at the same time, rather than the last one
                 # while measurement[index-1,0] == measurement[index,0]:
                 #     zt = np.append(zt,measurement[index,:],axis=0)
                 #     index = index + 1
@@ -312,33 +254,67 @@ def pt3():
 
                 # we have xt, ut, zt, and zt_estimate
 
-                # sets the weight for each particle, normalized
-                for i_2 in range(len(weights)):
-                    # ztw = np.array(([zt[2],zt[3]])) # gets range, bearing data from zt
-                    # weights[i_2,:]=(1/abs(ztw-zt_estimate))/m
-                    diff_range = abs(zt[2] - zt_estimate[0])
-                    diff_bear = abs(zt[3] - zt_estimate[1])
-                    weights[i_2]=[(1/diff_range)*m,(1/diff_bearing)*m]
+                # sets the weight for each particle, normalized; [range, bearing]
+                wt = np.zeros((m,1))
+                for i_2 in range(len(wt)):
 
+                    diff_range = (1/(abs(zt[2] - zt_estimate[0])))
+                    diff_bear = (1/(abs(zt[3] - zt_estimate[1])))
+                    wt[i_2]=(diff_range+diff_bear)/2
 
-            best = np.where(weights == np.amax(weights,axis=0))
-            new_range = best[0]
-            new_range = new_range[0]
-            new_bear = best[1]
-            new_bear = new_bear[0]
-
-            
-
+                # print wt
+                # xp=sampler(xp,wt)
 
         plotbarriers()
         p.title("Robot Odometry vs Ground Truth")
         # plots position data derived from odometry readings
+        p.plot(xp[:,1], xp[:,2], 'r-', label='Filtered')
         p.plot(xt[:,1], xt[:,2], 'b-', label='Robot Odometry')
+
         # plots position data from motion capture
-        #p.plot(groundtruth[:, 1], groundtruth[:, 2],'g-', label='Ground Truth')
+        p.plot(groundtruth[:, 1], groundtruth[:, 2],'g-', label='Ground Truth')
         p.legend(loc='best')
 
         p.show()
+
+    def plotbarriers(): # displays environment
+
+        # plots graph axes
+        p.xlabel("x position (m)")
+        p.ylabel("y position (m)")
+        p.xlim(-8, 10)
+        p.ylim(-7, 7)
+        p.autoscale = True
+
+        # plots landmark positions
+        p.plot(landmark[:, 1], landmark[:, 2], 'ro')
+
+        # plots barriers
+        p.plot([landmark[1, 1], landmark[4, 1]], [landmark[1, 2], landmark[4, 2]], 'k-')  # connects landmarks 7 and 10
+        p.plot([landmark[4, 1], landmark[3, 1]], [landmark[4, 2], landmark[3, 2]], 'k-')  # connects landmarks 10 and 9
+        p.plot([landmark[3, 1], landmark[0, 1]], [landmark[3, 2], landmark[0, 2]], 'k-')  # connects landmarks 9 and 6
+        p.plot([landmark[0, 1], landmark[2, 1]], [landmark[0, 2], landmark[2, 2]], 'k-')  # connects landmarks 6 and 8
+        p.plot([landmark[2, 1], landmark[5, 1]], [landmark[2, 2], landmark[5, 2]], 'k-')  # connects landmarks 8 and 11
+        p.plot([landmark[5, 1], landmark[6, 1]], [landmark[5, 2], landmark[6, 2]], 'k-')  # connects landmarks 11 and 12
+        p.plot([landmark[6, 1], landmark[14, 1]], [landmark[6, 2], landmark[14, 2]], 'k-')  # connects landmarks 12 and 20
+        p.plot([landmark[14, 1], landmark[13, 1]], [landmark[14, 2], landmark[13, 2]], 'k-')  # connects landmarks 20 and 19
+        p.plot([landmark[13, 1], landmark[12, 1]], [landmark[13, 2], landmark[12, 2]], 'k-')  # connects landmarks 19 and 18
+        p.plot([landmark[12, 1], landmark[11, 1]], [landmark[12, 2], landmark[11, 2]], 'k-')  # connects landmarks 18 and 17
+        p.plot([landmark[11, 1], landmark[9, 1]], [landmark[11, 2],  landmark[9, 2]], 'k-')  # connects landmarks 17 and 15
+        p.plot([landmark[9, 1], landmark[4, 1]], [landmark[9, 2], landmark[4, 2]], 'k-')  # connects landmarks 15 and 10
+
+        # plots island barriers
+        p.plot([landmark[10, 1], landmark[8, 1]], [landmark[10, 2], landmark[8, 2]], 'k-')  # connects landmarks 16 and 14
+        p.plot([landmark[8, 1], landmark[7, 1]], [landmark[8, 2], landmark[7, 2]], 'k-')  # connects landmarks 14 and 13
+
+        # plots landmark annotations
+        for i in range(len(landmark)):
+            p.annotate(str(landmark[i, 0])[:-2],  # landmark # label
+                       # landmark coordinates for label
+                       (landmark[i, 1], landmark[i, 2]),
+                       textcoords="offset points",  # how to position text
+                       xytext=(7, 10),  # distance from text to points (x,y)
+                       ha='center')  # horizontal adjustment; left, right, or center
 
     filter()
 
