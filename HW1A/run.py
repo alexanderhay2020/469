@@ -14,28 +14,33 @@ odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured
 def grid(): # displays environment
 
     # plots landmarks
-    xedges = [-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7]
-    yedges = [-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7]
+    xedges = [-2,-1,0,1,2,3,4]
+    yedges = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5]
+
+    x_lo_extent = -2
+    x_hi_extent = 4
+    y_lo_extent = -6
+    y_hi_extent = 5
 
     grid = np.zeros(([len(xedges),len(yedges)]))
 
     startx = 0.5
     starty = -1.5
 
-    for i in range(len(landmark)): # row index
-        for i_2 in range(len(landmark)-1): # col index
-            if landmark[i,1] >= xedges[i_2] and landmark[i,1] < xedges[i_2+1]:
-                grid[i,i_2] = 1
+    for k in range(len(landmark)):
+        for i in range(len(xedges)): # row index
+            if landmark[k,1] >= xedges[i] and landmark[k,1] < xedges[i]+1:
+                x = i
 
-        i_2 = 0
+        for j in range(len(yedges)): # col index
+            if landmark[k,2] >= yedges[j] and landmark[k,2] < yedges[j]+1:
+                y = j
+
+        grid[x,y] = 1
+
+
     fig1 = plt.figure()
-    plt.imshow(grid)#.T,cmap=plamsa) # cmap, origin=lower, extent
-    plt.grid()
-
-
-    plt.title('zeros')
-    plt.xlabel("x position (m)")
-    plt.ylabel("y position (m)")
+    plt.imshow(grid.T,cmap='plasma',origin='lower',extent=[-2,4,-6,5])
     #plt.autoscale = True
 
     # # plots barriers
@@ -68,7 +73,6 @@ def grid(): # displays environment
     plt.xlabel("x position (m)")
     plt.ylabel("y position (m)")
     plt.autoscale = True
-    plt.grid()
     plt.show()
 
 grid()
