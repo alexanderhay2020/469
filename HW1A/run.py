@@ -20,16 +20,16 @@ def grid(): # displays environment
     plt.autoscale = True
 
     # plots landmark positions
-    plt.plot(landmark[:, 1], landmark[:, 2], 'ro')
+    #plt.plot(landmark[:, 1], landmark[:, 2], 'ro')
 
     # plots landmark annotations
-    for i in range(len(landmark)):
-        plt.annotate(str(landmark[i, 0])[:-2],  # landmark # label
-                   # landmark coordinates for label
-                   (landmark[i, 1], landmark[i, 2]),
-                   textcoords="offset points",  # how to position text
-                   xytext=(7, 10),  # distance from text to points (x,y)
-                   ha='center')  # horizontal adjustment; left, right, or center
+    # for i in range(len(landmark)):
+    #     plt.annotate(str(landmark[i, 0])[:-2],  # landmark # label
+    #                # landmark coordinates for label
+    #                (landmark[i, 1], landmark[i, 2]),
+    #                textcoords="offset points",  # how to position text
+    #                xytext=(7, 10),  # distance from text to points (x,y)
+    #                ha='center')  # horizontal adjustment; left, right, or center
 
 
     xedges = [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]
