@@ -11,9 +11,14 @@ measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
 odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
 def grid(): # displays environment
-
-    # plots graph axes
+    xedges = [-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7]
+    yedges = [-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7]
+    # plots grid
+    fig = plt.figure()
+    ax = fig.gca()
     plt.title('Environment')
+    plt.xticks(xedges)
+    plt.yticks(yedges)
     plt.xlabel("x position (m)")
     plt.ylabel("y position (m)")
 
@@ -23,7 +28,7 @@ def grid(): # displays environment
     #plt.plot(landmark[:, 1], landmark[:, 2], 'ro')
 
     # plots landmark annotations
-    # for i in range(len(landmark)):
+    # for i in range(len(landqmark)):
     #     plt.annotate(str(landmark[i, 0])[:-2],  # landmark # label
     #                # landmark coordinates for label
     #                (landmark[i, 1], landmark[i, 2]),
@@ -32,14 +37,13 @@ def grid(): # displays environment
     #                ha='center')  # horizontal adjustment; left, right, or center
 
 
-    xedges = [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]
-    yedges = [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]
+
 
     # H = H.T  # Let each row list bins with common y range.
 
     plt.hist2d(landmark[:, 1], landmark[:, 2], bins=(xedges, yedges), cmap=plt.cm.BuGn_r)
-    plt.xlim(-2,5)
-    plt.ylim(-6,6)
+    # plt.xlim(-2,5)
+    # plt.ylim(-6,6)
     plt.grid()
     plt.show()
 
