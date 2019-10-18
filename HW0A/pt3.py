@@ -91,8 +91,8 @@ def main():
     print delta
     plotbarriers()
     p.title("Robot Odometry vs Ground Truth")
-    p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
-    p.plot(groundtruth[:,1],groundtruth[:,2],'g-',label='Ground Truth') # plots position data from motion capture
+    #p.plot(delta[:,0],delta[:,1],'b-',label='Robot Odometry') # plots position data derived from odometry readings
+    #p.plot(groundtruth[:,1],groundtruth[:,2],'g-',label='Ground Truth') # plots position data from motion capture
     p.legend(loc='best')
 
     p.show()

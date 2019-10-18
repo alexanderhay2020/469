@@ -15,7 +15,6 @@ odo=[(0,0.5,0),
 (4,0.5,0)]
 
 odo=np.array(odo)
-d
 
 # array of x, y, theta values
 xytheta=np.zeros((len(odo),3))
