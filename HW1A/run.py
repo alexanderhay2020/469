@@ -46,21 +46,23 @@ def grid(): # displays environment
    p.grid()
    p.show()
 
-class grid():
+grid()
 
-    """
-    This is the grid class
-
-    """
-
-    def __init__(grid,coor,flag,start,goal):
-
-        grid = np.zeros((12,12))
-        for i in range(len(grid)):
-            grid[i] = np.arange(i,i+1,0.1)
-
-
-        # need to map index to grid space
-        grid.flag = flag # occupied, unoccupied
-        grid.coor.x = x
-        grid.coor.y = y
+# #class grid():
+#
+#     """
+#     This is the grid class
+#
+#     """
+#
+#     def __init__(grid,coor,flag,start,goal):
+#
+#         grid = np.zeros((12,12))
+#         for i in range(len(grid)):
+#             grid[i] = np.arange(i,i+1,0.1)
+#
+#
+#         # need to map index to grid space
+#         grid.flag = flag # occupied, unoccupied
+#         grid.coor.x = x
+#         grid.coor.y = y
