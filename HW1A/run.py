@@ -22,9 +22,14 @@ class grid():
         startx = 0.5
         starty = -1.5
 
+        # for i in range(len(landmark)):
+        #     for i_2 in range(len)landmark)):
+
+
+        #plt.imshow(grid.T,) # cmap, origin=lower, extent
         # plots grid
         fig = plt.figure()
-        ax = fig.gca()
+        #ax = fig.gca()
         plt.title('Environment')
         plt.xticks(xedges)
         plt.yticks(yedges)
@@ -38,7 +43,7 @@ class grid():
         #plt.plot(landmark[:, 1], landmark[:, 2], 'ro')
 
         # plots landmark annotations
-        # for i in range(len(landqmark)):
+        # for i in range(len(landmark)):
         #     plt.annotate(str(landmark[i, 0])[:-2],  # landmark # label
         #                # landmark coordinates for label
         #                (landmark[i, 1], landmark[i, 2]),
