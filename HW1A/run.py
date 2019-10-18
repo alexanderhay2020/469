@@ -14,7 +14,17 @@ odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured
 def grid(): # displays environment
 
     # plots landmarks
+
+    x = np.arange(0, 1, 0.1)
+    x = np.arange(0, 1, 0.1)
+
+    fig = plt.figure()
+    ax = fig.gca()
+    # ax.set_xticks(np.arange(-6, 10,.1))
+    # ax.set_yticks(np.arange(-6, 10,.1))
     plt.scatter(landmark[:, 1], landmark[:, 2])
+    # plt.grid()
+    # plt.show()
 
     # plots barriers
     plt.plot([landmark[1,1],landmark[4,1]],[landmark[1,2],landmark[4,2]],'k-') # connects landmarks 7 and 10
@@ -45,8 +55,8 @@ def grid(): # displays environment
     plt.title('Environment')
     plt.xlabel("x position (m)")
     plt.ylabel("y position (m)")
-    plt.xlim(-2, 5)
-    plt.ylim(-6, 6)
+    # plt.xlim(-2, 5)
+    # plt.ylim(-6, 6)
     plt.autoscale = True
     plt.grid()
     plt.show()
