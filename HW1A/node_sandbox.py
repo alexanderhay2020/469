@@ -1,10 +1,8 @@
-"""
-Alexander Hay
-
-"""
+# Draws grid_map
 
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 # global variables
 barcodes = np.loadtxt('ds1_Barcodes.dat')
@@ -13,111 +11,11 @@ landmark = np.loadtxt('ds1_Landmark_Groundtruth.dat')  # landmark data
 measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
 odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
+#class grid_map():
 
-class Node():
-    """
-    Keeps track of nodes attributes
-    """
-
-    def __init__(self, parent=None, pos=None):
-        self.parent = parent
-        self.pos = pos # {start, goal}
-
-        self.g = 0 # cost to node
-        self.h = 0 # cost to goal (heuristic)
-        self.f = 0 # g + h
-
-    # def __eq__(self, other):
-    #     return self.pos == other.pos
-
-def a_star(grid, start, end):
-    """Returns a list of tuples as a path from the given start to the given end in the given grid"""
-
-    # Create start and end node
-    start_node = Node(None, start)
-    start_node.g = 0
-    start_node.h = 0
-    start_node.f = start_node.g + start_node.h
-
-    end_node = Node(None, end)
-    end_node.g = 0
-    end_node.h = 0
-    end_node.f = end_node.g + end_node.h
-
-    # Initialize both open and closed list
-    open_list = []
-    closed_list = []
-
-    # Add the start node
-    open_list.append(start_node)
-
-    # loop
-    while len(open_list) > 0:
-
-        # Get the current node
-        current_node = open_list[0]
-        current_index = 0
-        for index, item in enumerate(open_list):
-            if item.f < current_node.f:
-                current_node = item
-                current_index = index
-
-
-        # Remove current from open list, add to closed list
-        open_list.pop(current_index)
-        closed_list.append(current_node)
-
-        # Found the goal
-        if current_node == end_node:
-            path = []
-            current = current_node
-            while current is not None:
-                path.append(current.pos)
-                current = current.parent
-            return path[::-1] # Return reversed path
-
-        # Generate children
-        child_list = []
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent squares
-
-            # Get node position
-            node_position = (current_node.pos[0] + new_position[0], current_node.pos[1] + new_position[1])
-
-            # Make sure within range
-            if node_position[0] > (len(grid) - 1) or node_position[0] < 0 or node_position[1] > (len(grid[len(grid)-1]) -1) or node_position[1] < 0:
-                continue
-
-            # Make sure walkable terrain
-            if grid[[node_position[0]][node_position[1]]] != 0:
-                continue
-
-            # Create new node
-            new_node = Node(current_node, node_position)
-
-            # Append
-            child_list.append(new_node)
-
-        # Loop through children
-        for child in child_list:
-
-            # Child is on the closed list
-            for closed_child in closed_list:
-                if child == closed_child:
-                    continue
-
-            # Create the f, g, and h values
-            child.g = current_node.g + 1
-            child.h = ((child.pos[0] - end_node.pos[0]) ** 2) + ((child.pos[1] - end_node.pos[1]) ** 2)
-            child.f = child.g + child.h
-
-            # Child is already in the open list
-            for open_node in open_list:
-                if child == open_node and child.g > open_node.g:
-                    continue
-
-            # Add the child to the open list
-            open_list.append(child)
-        #print len(open_list)
+def __init__(self,cell_size_landmarks):
+    self.attribute1 = whatever
+    self.attribute2 = whatever
 
 def grid_map(): # creates environment
 
@@ -136,8 +34,77 @@ def grid_map(): # creates environment
                 y = j
 
         grid_map[x,y] = 100
-        #print str(x) + ", " + str(y)
+
     return grid_map
+
+class Node():
+    """
+    Keeps track of nodes attributes
+    """
+
+    def __init__(self,parent,pos,start=None,goal=None):
+
+        self.parent = parent
+        self.x = pos[0]
+        self.y = pos[1]
+
+        self.g = 0 # cost to node
+        self.h = 0 # cost to goal (heuristic)
+        self.f = 0 # g + h
+
+    def children(grid,cell):
+        # if parent:
+        #     self.path = parent.path[:]
+        #     self.path.append(f)
+        #     self.start = parent.start
+        #     self.goal = parent.goal
+        # else:
+        #     self.path = f
+        #     self.start = start
+        #     self.goal = goal
+
+    def estimate(self, dx, dy):
+
+        x = dx - self.x
+        y = dy - self.y
+
+        # Euclidian Distance
+        # d = math.sqrt(xd * xd + yd * yd)
+        # Manhattan distance
+        d = abs(xd) + abs(yd)
+
+        return(d)
+
+
+def a_star(grid_map,start,goal):
+
+    start_node = Node(None,start)
+    start_node.g = 0
+    start_node.h = 0
+    start_node.f = start_node.g + start_node.h
+
+    goal_node = Node(None,goal)
+    goal_node.g = 0
+    goal_node.h = 0
+    goal_node.f = goal_node.g + goal_node.h
+
+    # initialize lists
+    open_list = []
+    closed_list = []
+
+    open_list.append(start_node)
+
+    while len(open_list) > 0
+
+        current_node = open_list[0]
+        i = 0
+        open_list.remove(current_node)
+        closed_list.append(current_node)
+
+        if current_node == goal_node:
+            break
+
+        for n in
 
 def plotter(grid):
     # # plots barriers
@@ -187,14 +154,7 @@ def plotter(grid):
 
 def main():
 
-    grid=grid_map()
+    map = grid_map()
+    plotter(map)
 
-    start = (4.5, 3.5)
-    end = (4.5, -1.5)
-
-    path = a_star(grid, start, end)
-    print(path)
-
-
-if __name__ == '__main__':
-    main()
+main()
