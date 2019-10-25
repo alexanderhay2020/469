@@ -56,12 +56,12 @@ A* Algorithm:
 
     Identify start/goal nodes
 
-    node = grid_map(startx,starty)
-    goal = grid_map(goalx,goaly)
+    node = grid_map(start_coords)
+    goal = grid_map(goal_coords)
 
     Initialize costs
 4       node.g = distance from node to start
-            node.g =
+            node.g = 1
         node.h = distance from node to goal; heuristic
         node.f = g + h cost function; estimate of best route to node (we want the lowest cost)
 
@@ -70,11 +70,13 @@ A* Algorithm:
     Initiate closed list []
         - Add start node to open list
 
-    while open list is not empty
+    *loop while open list is not empty
+    while len(open_list) > 0:
         a) find node with least f on open list,
-           call node q
+           call it node q
 
         b) pop q off open list
+           put q on closed list
 
         c) generate q's 8 successors
             child_list = [
@@ -117,9 +119,30 @@ A* Algorithm:
                 /loop
             /loop
 
-            find child with lowest f
-            if child_list[i] ==
+            * check if child is on closed/open list, and if so, checks for lower f cost
+            for i in range(len(child_list)):
+                for j in range(len(closed_list)):
+                    if child_list[i] == closed_list[j]:
+                        if child_list[i].f > closed_list[j].f:
+                            remove child_list[i] from child_list
+                        endif
+                    endif
+                /loop
+                for k in range(len(open_list)):
+                    if child_list[i] == open_list[j]:
+                        if child_list[i].f > open_list[j].f:
+                            remove child_list[i] from child_list
+                        endif
+                    endif
+            /loop
 
+            * add child with lowest f to open list
+            * if tie, add child with lowest h to open list
+            Don't even know what this code would look like, never sorted in python before
+
+    plot point for each node in closed list
+
+    plot path from goal (from point to point)
     """
 
     import numpy as np
