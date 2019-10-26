@@ -40,6 +40,7 @@ Part A:
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 # global variables
 barcodes = np.loadtxt('ds1_Barcodes.dat')
@@ -48,7 +49,7 @@ landmark = np.loadtxt('ds1_Landmark_Groundtruth.dat')  # landmark data
 measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
 odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
-class node(object):
+class Node(object):
     """
     creates attributes for each node in grid environment
 
@@ -134,9 +135,18 @@ class Grid(object):
     #         y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
     #         return np.transpose(np.array([x_coord, y_coord]))
 
-def Astar(start, stop, grid_map):
+class Astar(object):
 
-    def heuristic(self, position):
+    def __init__(self, start, goal, grid_map):
+
+        # initiatialize costs
+        start_node = Node(None,start)
+        goal_node = Node(None,goal)
+        start_node.g = 0 # distance from node to start
+        start_node.h = self.heuristic(start_node.position,goal_node.position) # distance from node to goal
+
+
+    def heuristic(self, position, goal):
         """
         calculates minimum cost from node to goal
 
@@ -145,20 +155,17 @@ def Astar(start, stop, grid_map):
         straight_dist returns the opposite, the largest of the x and y differences
         cost = straight_dist + corner_cut (it cuts the corner)
         """
-        transition_cost = 1 # defined by Grid.node_cost but I don't know how to access that information
-        corner_cut = min(abs(position[0] - self.goal[0]), abs(position[1] - self.goal[1])) # returns x difference or y difference, whichever is shorter
-        straight_dist = max(abs(position[0] - self.goal[0]), abs(position[1] - self.goal[1]))
-        cost = (straight_dist + (sqrt(2) * corner_cut)) * transition_cost
+        transition_cost = 1 # defined by Grid.node cost I think but I don't know how to access that information
+        corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
+        straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
+        cost = (straight_dist + (math.sqrt(2) * corner_cut)) * transition_cost
 
         return cost
     """
     A* algorithm
     """
-    # initiatialize costs
-    start_node = Node(None, start)
-    goal_node = Node(None,goal)
-    start_node.g = 0 # distance from node to start
-    start_node.f = heuristic()
+
+
 
 
 def plot(grid):
@@ -182,11 +189,13 @@ def main():
     text
     """
     grid_map = Grid(1) # CHANGE THIS FOR PART A #6 OF HW1
-    plot(grid_map)
-    # start = [0.5,-1.5]
-    # goal = [0.5,1.5]
-    # astar = Astar(start, goal, grid_map)
 
+    start = (0.5,-1.5)
+    goal = (0.5,1.5)
+
+    astar = Astar(start, goal, grid_map)
+
+    plot(grid_map)
 
 if __name__ == '__main__':
     main()
