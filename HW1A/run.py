@@ -135,12 +135,31 @@ class Grid(object):
     #         return np.transpose(np.array([x_coord, y_coord]))
 
 def Astar(start, stop, grid_map):
+
+    def heuristic(self, position):
+        """
+        calculates minimum cost from node to goal
+
+        transistion_cost is defined by Grid.node, but I don't know how to access that info, so it's redefined here
+        corner_cut returns x difference or y difference (between node and goal), whichever is shorter. because...
+        straight_dist returns the opposite, the largest of the x and y differences
+        cost = straight_dist + corner_cut (it cuts the corner)
+        """
+        transition_cost = 1 # defined by Grid.node_cost but I don't know how to access that information
+        corner_cut = min(abs(position[0] - self.goal[0]), abs(position[1] - self.goal[1])) # returns x difference or y difference, whichever is shorter
+        straight_dist = max(abs(position[0] - self.goal[0]), abs(position[1] - self.goal[1]))
+        cost = (straight_dist + (sqrt(2) * corner_cut)) * transition_cost
+
+        return cost
     """
     A* algorithm
     """
     # initiatialize costs
-    start_node = None(None, start)
-    goal_node = None(None,goal)
+    start_node = Node(None, start)
+    goal_node = Node(None,goal)
+    start_node.g = 0 # distance from node to start
+    start_node.f = heuristic()
+
 
 def plot(grid):
     """
