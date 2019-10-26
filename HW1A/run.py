@@ -124,23 +124,23 @@ class Grid(object):
         return (x, y)
 
 
-    def grid_to_world(self, position): # grid to world
-        """
-        translate i,j coordinates to x,y world coordinates
-        """
-        x_coord = []
-        y_coord = []
-        if hasattr(position[0], "__len__"):
-            for i, j in position:
-                x_coord.append(self.cell_size * (i + 0.5) - 2)
-                y_coord.append(self.cell_size * (j + 0.5) - 6)
-            return np.transpose(np.array([x_coord, y_coord]))
-        else:
-            x_coord.append(self.cell_size * (position[0] + 0.5) - 2)
-            y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
-            return np.transpose(np.array([x_coord, y_coord]))
+    # def grid_to_world(self, position): # grid to world
+    #     """
+    #     translate i,j coordinates to x,y world coordinates
+    #     """
+    #     x_coord = []
+    #     y_coord = []
+    #     if hasattr(position[0], "__len__"):
+    #         for i, j in position:
+    #             x_coord.append(self.cell_size * (i + 0.5) - 2)
+    #             y_coord.append(self.cell_size * (j + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
+    #     else:
+    #         x_coord.append(self.cell_size * (position[0] + 0.5) - 2)
+    #         y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
 
-class Astar(object):
+class Astar(object): #start, goal, grid_map):
     """
     A* algorithm
     """
@@ -162,28 +162,29 @@ class Astar(object):
 
         open_list.append(start_node)
 
-        # print "start_node g: " + str(start_node.g)
-        # print "start_node h: " + str(start_node.h)
-        # print "start_node f: " + str(start_node.f)
-        # print start_node.position[1] # prints y since node.postition is (x,y)
-        # print "start node"
-        # print start_node.position
-        # print
+        print "start node: " + str(start_node.position)
+        print "goal node: " + str(goal_node.position)
+        # while open_list[0] != goal_node:
+        for loop in range(5):
 
-        while open_list[0] /= goal_node:
-            q = open_list[0] # q is "querrent" (current)
+            q = open_list[0]
 
-            if q == goal:
-                path():
+            if q.position == goal_node.position:
+                path = []
+                trace = q
+                while trace is not None:
+                    path.append(trace.position)
+                    trace = trace.parent
+
+                #print path
+                self.path=path
+                return #path
 
             open_list.pop(0)
             closed_list.append(q)
 
             child_list = self.children(q, goal_node, grid_map)
-            # child = self.children(q, goal_node, grid_map)[0]
             open_list = self.validation(child_list, closed_list, open_list)
-
-
 
     def heuristic(self, position, goal):
         """
@@ -201,13 +202,12 @@ class Astar(object):
         # print "cost: " + str(cost)
         return cost
 
-
     def children(self, node, goal, grid_map):
         """
         returns list of possible node children
         """
         child_list = []
-        print node.position
+        #print node.position
         # print goal.position
         index = 0
         for i in range(-1,2):
@@ -243,7 +243,7 @@ class Astar(object):
 
         return child_list
 
-    def validation(child_list, closed_list, open_list):
+    def validation(self, child_list, closed_list, open_list):
 
         for i in range(len(child_list)):
 
@@ -276,9 +276,9 @@ class Astar(object):
                     # if child IS in open list, and if child.f EQUALS open.f
                     # compares h values
                     # if child.h IS greater, child is removed from child list
-                elif child_list[i].f == open_list[k].f:
-                        if child_list[i].h > open_list[k].h:
-                            child_list.remove(child_list[i])
+                    elif child_list[i].f == open_list[k].f:
+                            if child_list[i].h > open_list[k].h:
+                                child_list.remove(child_list[i])
 
             # if child list passes all that, child is added to open list
             # list is sorted by f
@@ -287,7 +287,18 @@ class Astar(object):
 
             return open_list
 
-def plot(grid):
+    def path_back(q):
+        """
+        text
+        """
+        path = []
+        trace = q
+        while trace is not None:
+            path.append(trace.position)
+            trace = trace.parent
+        return path[::-1] # Return reversed path
+
+def plot(grid,path):
     """
     plots grid_map information
     """
@@ -297,6 +308,7 @@ def plot(grid):
     ax = plt.gca();
     ax.set_xticks(grid.xedges)
     ax.set_yticks(grid.yedges)
+
     plt.title('Environment')
     plt.xlabel("x position (m)")
     plt.ylabel("y position (m)")
@@ -312,8 +324,7 @@ def main():
     start = (0.5,-1.5)
     goal = (0.5,1.5)
 
-
     astar = Astar(start, goal, grid_map)
-    plot(grid_map)
+    plot(grid_map,astar.path)
 if __name__ == '__main__':
     main()
