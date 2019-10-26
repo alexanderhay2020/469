@@ -1,5 +1,41 @@
 """
-text
+Alexander Hay
+A* Algorithm
+
+Part A:
+
+1. Build grid cell of 1x1m, ranges x:[-2,5], y:[-6,6].
+    * Mark cells with landmarks
+
+2. Implement A* Algorithm
+
+3. Use algorithm to plan paths between the following sets of start/goal positions:
+
+    A: S=[0.5,-1.5], G=[0.5,1.5]
+    B: S=[4.5,3.5], G=[4.5-,1.5]
+    C: S=[-0.5,5.5], G=[1.5,-3.5]
+
+    * Display occupied cells
+    * Display explored cells
+    * Display planned path
+
+4. Change program so that robot does not have 'a priori' knowledge of obstacles
+
+5. Repeat step 3 with changes in program
+
+6. Decrease cell size to 0.1x0.1m
+
+    * inflate size of landmarks to be 0.3m circles
+
+7. Use algorithm to plan paths between the following sets of start/goal positions:
+
+        A: S=[2.45,-3.55], G=[0.95,-1.55]
+        B: S=[4.95,-0.05], G=[2.45,0.25]
+        C: S=[-0.55,1.45], G=[1.95,3.95]
+
+        * Display occupied cells
+        * Display explored cells
+        * Display planned path
 """
 
 import numpy as np
@@ -12,78 +48,152 @@ landmark = np.loadtxt('ds1_Landmark_Groundtruth.dat')  # landmark data
 measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
 odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
 
-class Node():
+class node(object):
     """
-    text
+    creates attributes for each node in grid environment
+
+    self.parent = parent node
+    self.position = (x,y)
+    self.g = distance from node to start
+    self.h = distance from node to goal (heuristic)
+    self.f = g + h (cost function)
     """
 
-    self.g = 0 # cost to node
-    self.h = 0 # cost to goal (heuristic)
+    def __init__(self, parent=None, position=None):
 
-    self.x = 0 # x position
-    self.y = 0 # y position
+        self.parent = parent
+        self.position = position
+        self.g = 0
+        self.h = 0
+        self.f = self.g + self.h
 
-class a_star():
+class Grid(object):
     """
-    text
+    creates environment
+    populates environment with landmarks
+    + assigns landmark
     """
-    def grid_map(): # creates environment
 
-        xedges = [-2,-1,0,1,2,3,4]
-        yedges = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5]
+    def __init__(self, size):
+        self.set_cell(size)
 
-        grid_map = np.zeros(([len(xedges),len(yedges)]))
+    def set_cell(self, size):
+        """
+        sets grid_map size and node cost
+        """
+        self.xedges = np.arange(-2,5,size)
+        self.yedges = np.arange(-6,6,size)
+        self.node_cost = np.ones([len(self.xedges),len(self.yedges)]) # initiaizes each cell cost to be one
+        self.landmarks()
+
+    def landmarks(self):
+        """
+        marks landmarks and their node cost
+        """
+        inflate = 0.3 # Relevant for Part A #6 of HW1
 
         for k in range(len(landmark)):
-            for i in range(len(xedges)): # row index
-                if landmark[k,1] >= xedges[i] and landmark[k,1] <= xedges[i]+1:
+            for i in range(len(self.xedges)): # row index
+                # print landmark[k,1]
+                # print self.xedges[i]
+                if landmark[k,1] >= self.xedges[i] and landmark[k,1] <= self.xedges[i]+1:
                     x = i
 
-            for j in range(len(yedges)): # col index
-                if landmark[k,2] >= yedges[j] and landmark[k,2] <= yedges[j]+1:
+            for j in range(len(self.yedges)): # col index
+                if landmark[k,2] >= self.yedges[j] and landmark[k,2] <= self.yedges[j]+1:
                     y = j
 
-            grid_map[x,y] = 100
-            #print str(x) + ", " + str(y)
-        return grid_map
+            self.node_cost[x][y] = 1000 # cost of landmark
 
-    def neighbor(node):
-        """
-        text
-        """
-        neighbors = []
-        for x in range(-1,1):
-            for y in range (-1,1):
-                if x == 0 and y == 0:
-                    continue
-                checkX = node.x + x
-                checkY = node.y + y
+            # print str(k) + ": " + str(i) + ", " + str(j)
+            # print self.node_cost[i][j]
 
-                if checkX >= 0 and checkX < 4 and checkY >= 0 and checkY < 5: # x grid limit
+    # def world_to_grid(self, position): # world to grid
+    #     """
+    #     translate world x,y to grid_map i,j
+    #     """
+    #
+    #     x_index = self.xedges.searchsorted(position[0])
+    #     y_index = self.xedges.searchsorted(position[1])
+    #
+    #     return [x_index, y_index]
+    #
+    # def grid_to_world(self, position): # grid to world
+    #     """
+    #     translate i,j coordinates to x,y world coordinates
+    #     """
+    #     x_coord = []
+    #     y_coord = []
+    #     if hasattr(position[0], "__len__"):
+    #         for i, j in position:
+    #             x_coord.append(self.cell_size * (i + 0.5) - 2)
+    #             y_coord.append(self.cell_size * (j + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
+    #     else:
+    #         x_coord.append(self.cell_size * (position[0] + 0.5) - 2)
+    #         y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
 
-                    neighbors.append((checkX,checkY))
+def Astar(start, stop, grid_map):
+    """
+    A* algorithm
+    """
+    # initiatialize costs
+    start_node = None(None, start)
+    goal_node = None(None,goal)
 
-        return neighbors
+def plot(grid):
+    """
+    plots grid_map information
+    """
 
-    def path(start,goal): # {vector3, vector3}
-        """
-        text
-        """
-        start_node = start
-        goal_node = goal
-        open_list = []
-        closed_list = []
+    fig1 = plt.figure()
+    plt.imshow(grid.node_cost.T,cmap='plasma',origin='lower',extent=[-2,5,-6,6])
+    ax = plt.gca();
+    ax.set_xticks(grid.xedges)
+    ax.set_yticks(grid.yedges)
+    plt.title('Environment')
+    plt.xlabel("x position (m)")
+    plt.ylabel("y position (m)")
+    plt.grid(which='major',axis='both')
+    plt.show()
 
-        open_set.append(start_node)
+def main():
+    """
+    text
+    """
+    grid_map = Grid(1) # CHANGE THIS FOR PART A #6 OF HW1
+    plot(grid_map)
+    # start = [0.5,-1.5]
+    # goal = [0.5,1.5]
+    # astar = Astar(start, goal, grid_map)
 
-        while len(open_list) > 0:
-            current_node = open_list[0]
-            for i in range(len(open_list)):
-                if open_list[i].f < current_node.f or open_list.f == curent_node.f and open_list.h < current_node.h:
-                    current_node = open_list[i]
-            open_list.pop(current_node)
-            closed_list.append(current_node)
 
-            if current_node == goal_node:
-                return
-            #for i in range(len(neighbors))
+if __name__ == '__main__':
+    main()
+    # def world_to_grid(self, position): # world to grid
+    #     """
+    #     translate world x,y to grid_map i,j
+    #     """
+    #
+    #     x_index = self.xedges.searchsorted(position[0])
+    #     y_index = self.xedges.searchsorted(position[1])
+    #
+    #     return [x_index, y_index]
+    #
+    # def grid_to_world(self, position): # grid to world
+    #     """
+    #     translate i,j coordinates to x,y world coordinates
+    #     """
+    #     x_coord = []
+    #     y_coord = []
+    #     if hasattr(position[0], "__len__"):
+    #         for i, j in position:
+    #             x_coord.append(self.cell_size * (i + 0.5) - 2)
+    #             y_coord.append(self.cell_size * (j + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
+    #     else:
+    #         x_coord.append(self.cell_size * (position[0] + 0.5) - 2)
+    #         y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
+    #         return np.transpose(np.array([x_coord, y_coord]))
+    #return grid_map

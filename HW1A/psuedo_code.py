@@ -144,13 +144,3 @@ A* Algorithm:
 
     plot path from goal (from point to point)
     """
-
-    import numpy as np
-    import matplotlib.pyplot as plt
-
-    # global variables
-    barcodes = np.loadtxt('ds1_Barcodes.dat')
-    groundtruth = np.loadtxt('ds1_Groundtruth.dat') # position data from motion capture (may be taken as known information for filtering)
-    landmark = np.loadtxt('ds1_Landmark_Groundtruth.dat')  # landmark data
-    measurement = np.loadtxt('ds1_Measurement.dat') # measurement data from robot
-    odometry = np.loadtxt('ds1_Odometry.dat') # time, forward v, angular v, measured from robot
