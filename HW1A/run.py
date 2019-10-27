@@ -328,7 +328,6 @@ class Astar_online(object): #start, goal, grid_map):
     Fuctions:
     heuristic -- calculates the minimum cost from node location to goal
     children --- returns a list of potential node children
-    validation - vets children against open and closed lists with their f and h values, returns updated open list sorted by f values
     """
     def __init__(self, start, goal, grid_map):
 
@@ -344,11 +343,10 @@ class Astar_online(object): #start, goal, grid_map):
         start_node.f = start_node.g + start_node.h
 
         open_list = [] # all generated nodes
-        closed_list = [] # all expanded nodes
 
         open_list.append(start_node)
 
-        while open_list[0] != goal_node:
+        while open_list != goal_node:
 
             q = open_list[0]
 
@@ -362,11 +360,10 @@ class Astar_online(object): #start, goal, grid_map):
                 return #path
 
             open_list.pop(0)
-            closed_list.append(q)
 
             child_list = self.children(q, goal_node, grid_map)
-            open_list = self.validation(child_list, closed_list, open_list)
-
+            open_list = child_list
+            
     def heuristic(self, position, goal):
         """
         calculates minimum cost from node to goal
@@ -423,52 +420,7 @@ class Astar_online(object): #start, goal, grid_map):
         #     print child_list[i].f
         #     print
 
-        return child_list
-
-    def validation(self, child_list, closed_list, open_list):
-
-        for i in range(len(child_list)):
-
-            # checks if child is in closed list
-            if (child_list[i] in closed_list):
-                for j in range(len(closed_list)):
-
-                    # if child IS in closed list, checks if child.f is greater than closed.f
-                    # if it IS greater, child is removed from the child_list
-                    if child_list[i].f > closed_list[j].f:
-                        print yes
-                        child_list.remove(child_list[i])
-
-                    # if child IS in closed list, and if child.f EQUALS closed.f
-                    # compares h values
-                    # if child.h IS greater, child is removed from child list
-                    elif child_list[i].f == closed_list[j].f:
-                        if child_list[i].h > closed_list[j].h:
-                            child_list.remove(child_list[i])
-
-            # if child IS NOT in closed list
-            # checks if child is in open list
-            if (child_list[i] in closed_list):
-                for k in range(len(open_list)):
-
-                    # if child IS in open list, checks if child.f is greater than open.f
-                    # if it IS greater, child is removed from the child_list
-                    if child_list[i].f > open_list[k].f:
-                        child_list.remove(child_list[i])
-
-                    # if child IS in open list, and if child.f EQUALS open.f
-                    # compares h values
-                    # if child.h IS greater, child is removed from child list
-                    elif child_list[i].f == open_list[k].f:
-                            if child_list[i].h > open_list[k].h:
-                                child_list.remove(child_list[i])
-
-            # if child list passes all that, child is added to open list
-            # list is sorted by f
-            open_list.append(child_list[i])
-            open_list.sort(key=lambda x: x.f)
-
-            return open_list
+        return child_list # returns best child
 
 def plot(grid,path,start,goal,num):
     """
@@ -526,6 +478,17 @@ def main():
     goal = (1.5,-3.5)
     grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
     astar = Astar(start, goal, grid_map)
+    print "Start Node: " + str(start)
+    print "Goal Node: " + str(goal)
+    print "Path: " + str(astar.path)
+    plot(grid_map,astar.path,start,goal,3)
+    print
+
+    print "Set 3:"
+    start = (-0.5,5.5)
+    goal = (1.5,-3.5)
+    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
+    astar = Astar_online(start, goal, grid_map)
     print "Start Node: " + str(start)
     print "Goal Node: " + str(goal)
     print "Path: " + str(astar.path)
