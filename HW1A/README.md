@@ -25,26 +25,26 @@ ME 469, HW1, Part B
 #### Node (Class)
 Defines attributes for each node<br/>
 ##### Attributes:
-+ parent &nbsp;&nbsp;&nbsp; parent node
++ parent &nbsp;&nbsp;&nbsp;&nbsp; parent node
 + position &nbsp; (x,y)
-+ g &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to start
-+ h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to goal (heuristic)
-+ f &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g + h (cost function)
++ g &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to start
++ h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to goal (heuristic)
++ f &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g + h (cost function)
 
 #### Grid (Class)
 Sets grid_map node size and node cost
 ##### Attributes:
-+ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
-+ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goal node in grid coordinates
++ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
++ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goal node in grid coordinates
 + landmark_list &nbsp;&nbsp; list of landmarks (used for debugging)
-+ xedges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an array of the x coordinates for nodes the grid_map is built of
-+ yedges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an array of the y coordinates for nodes the grid_map is built of
-+ node_cost &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the cost of entering that node
++ xedges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an array of the x coordinates for nodes the grid_map is built of
++ yedges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; an array of the y coordinates for nodes the grid_map is built of
++ node_cost &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the cost of entering that node
 
-###### Functions:
-+ set_cell ------ determines how many nodes to populate world with and their size
-+ landmarks ----- converts landmark point to a node, sets node_cost of landmark node to 1000
-+ world_to_grid - converts world points to their nodes points
+##### Functions:
++ set_cell &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; determines how many nodes to populate world with and their size
++ landmarks &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; converts landmark point to a node, sets node_cost of landmark node to 1000
++ world_to_grid &nbsp;&nbsp; converts world points to their nodes points
 
 
 
