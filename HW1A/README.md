@@ -62,8 +62,8 @@ ME 469, HW1, Part B
 &nbsp;&nbsp; A* algorithm
 
 ##### Parameters:
-+ start &nbsp;&nbsp;&nbsp;&nbsp; raw start location
-+ goal &nbsp;&nbsp;&nbsp;&nbsp; raw goal location
++ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw start location
++ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw goal location
 + grid_map &nbsp;&nbsp;&nbsp; map created by Grid class
 
 ##### Attributes:
@@ -71,8 +71,8 @@ ME 469, HW1, Part B
 + goal &nbsp;&nbsp;&nbsp;&nbsp; goal location relative to the grip
 
 ##### Functions:
-+ heuristic &nbsp;&nbsp; calculates the minimum cost from node location to goal
-+ children &nbsp;&nbsp;&nbsp; returns a list of potential node children
++ heuristic &nbsp;&nbsp;&nbsp;&nbsp; calculates the minimum cost from node location to goal
++ children &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns a list of potential node children
 + validation &nbsp;&nbsp;&nbsp; vets children against open and closed lists with their f and h values, returns updated open list sorted by f values
 
 
