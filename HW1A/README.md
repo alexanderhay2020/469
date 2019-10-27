@@ -4,6 +4,12 @@ Alexander Hay<br/>
 ME 469, HW1, Part B<br/>
 A* Search and Navigation
 
+## Preface
+
+Run 'run.py' via python.
+
+Press 'q' to step through figures
+
 ---------------------------------
 ## Code Breakdown
 
@@ -14,7 +20,7 @@ A* Search and Navigation
 + matplotlib
 + math
 
-##### Global Variables
+##### Global Variables:
 + barcodes -> ds1_Barcodes.dat
 + groundtruth -> ds1_Groundtruth.dat
 + landmark -> ds1_Landmark_Groundtruth.dat
