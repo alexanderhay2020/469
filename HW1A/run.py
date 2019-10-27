@@ -189,10 +189,7 @@ class Astar(object): #start, goal, grid_map):
 
         open_list.append(start_node)
 
-        print "start node: " + str(start_node.position)
-        print "goal node: " + str(goal_node.position)
         while open_list[0] != goal_node:
-        # for loop in range(5):
 
             q = open_list[0]
 
@@ -216,15 +213,16 @@ class Astar(object): #start, goal, grid_map):
         calculates minimum cost from node to goal
 
         transistion_cost is defined by Grid.node, but I don't know how to access that info, so it's redefined here
-        corner_cut returns x difference or y difference (between node and goal), whichever is shorter. because...
-        straight_dist returns the opposite, the largest of the x and y differences
-        cost = straight_dist + corner_cut (it cuts the corner)
+        hypotenuse is the straight line distance to goal
+        cost is the hypotenuse times the transition cost
         """
-        transition_cost = 1 # this should be defined by Grid.node cost I think but I don't know how to access that information
-        corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
-        straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
-        cost = (straight_dist + (math.sqrt(2) * corner_cut)) * transition_cost
-        # print "cost: " + str(cost)
+        transition_cost = 1 #grid.node_cost this should be defined by Grid.node cost I think but I don't know how to access that information
+        hypotenuse = math.sqrt((position[0] - goal[0])**2 + (position[1] - goal[1])**2)
+        cost = hypotenuse * transition_cost
+        # corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
+        # straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
+        # cost = (straight_dist + corner_cut) * transition_cost # cutting corners does not affect cost. moving diagonal=1, moving udlr=1
+        # # print "cost: " + str(cost)
         return cost
 
     def children(self, node, goal, grid_map):
@@ -244,9 +242,8 @@ class Astar(object): #start, goal, grid_map):
                 child = Node(parent=parent, position=position)
                 # print "child #: " + str(index)
                 # print "child position: " + str(child.position)
-                child.g = node.g + child.parent.g
+                child.g = grid_map.node_cost[position[0]][position[1]] + child.parent.g
                 child.h = self.heuristic(child.position, goal.position)
-                # print "child h: " + str(child.h)
                 child.f = child.g + child.h
 
                 if child.position == node.position:
@@ -261,6 +258,7 @@ class Astar(object): #start, goal, grid_map):
                     child_list.append(child)
 
         child_list.sort(key=lambda x: x.f)
+
         # for i in range(len(child_list)):
         #     print "Child " + str(i) + ": " + str(child_list[i].position)
         #     print child_list[i].f
@@ -279,6 +277,7 @@ class Astar(object): #start, goal, grid_map):
                     # if child IS in closed list, checks if child.f is greater than closed.f
                     # if it IS greater, child is removed from the child_list
                     if child_list[i].f > closed_list[j].f:
+                        print yes
                         child_list.remove(child_list[i])
 
                     # if child IS in closed list, and if child.f EQUALS closed.f
@@ -317,17 +316,14 @@ def plot(grid,path,start,goal):
     plots grid_map information
     """
 
-    fig1 = plt.figure()
     plt.imshow(grid.node_cost.T,origin='lower',extent=[-2,5,-6,6])
     plt.plot(grid.start[0],grid.start[1],'go',label="Start Node")
-    plt.plot(grid.goal[0],grid.goal[1],'bx',label="Goal Node")
-    # for i in range(len(grid.landmark_list)):
-    #     lm = grid.landmark_list[i]
-    #     plt.plot(lm[0],lm[1],'ro',label="Landmarks")
-    # for i in range(len(path)-1):
-    #     from_node = path[i]
-    #     to_node = path[i+1]
-    #     plt.plot(path[i],path[i+1],'r-',label="path")
+    plt.plot(grid.goal[0],grid.goal[1],'bo',label="Goal Node")
+
+    for i in range(len(path)):
+        dot = path[i]
+        plt.plot(dot[0],dot[1],'rx')
+
     ax = plt.gca();
     ax.set_xticks(grid.xedges)
     ax.set_yticks(grid.yedges)
@@ -342,13 +338,39 @@ def main():
     """
     executes the assignment
     """
-
-    start = (-1.0,-5.0)
-    goal = (4.0,4.0)
+    print "Part A, #3"
+    print "Set 1:"
+    start = (0.5,-1.5)
+    goal = (0.5,1.5)
     grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
     astar = Astar(start, goal, grid_map)
-    print astar.path
+    print "Start Node: " + str(start)
+    print "Goal Node: " + str(goal)
+    print "Path: " + str(astar.path)
     plot(grid_map,astar.path,start,goal)
+    print
+
+    print "Set 2:"
+    start = (4.5,3.5)
+    goal = (4.5,-1.5)
+    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
+    astar = Astar(start, goal, grid_map)
+    print "Start Node: " + str(start)
+    print "Goal Node: " + str(goal)
+    print "Path: " + str(astar.path)
+    plot(grid_map,astar.path,start,goal)
+    print
+
+    print "Set 3:"
+    start = (-0.5,5.5)
+    goal = (1.5,-3.5)
+    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
+    astar = Astar(start, goal, grid_map)
+    print "Start Node: " + str(start)
+    print "Goal Node: " + str(goal)
+    print "Path: " + str(astar.path)
+    plot(grid_map,astar.path,start,goal)
+    print
 
 if __name__ == '__main__':
     main()
