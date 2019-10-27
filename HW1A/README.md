@@ -64,8 +64,12 @@ ME 469, HW1, Part B
 #### plot (Function)
 &nbsp;&nbsp; Plots grid map information
 ##### Parameters:
-+ grid &nbsp;&nbsp; grid_map that Grid class created
++ grid &nbsp;&nbsp;&nbsp; grid_map that Grid class created
 + path &nbsp;&nbsp; path that Astar class creates
 + start &nbsp;&nbsp; given
 + goal &nbsp;&nbsp; given
+
+#### main (Function)
+Executes assignment
+
 <!-- **bold** -->
