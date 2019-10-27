@@ -187,9 +187,7 @@ class Astar(object): #start, goal, grid_map):
                 while trace is not None:
                     path.append(trace.position)
                     trace = trace.parent
-
-                print path.reverse()
-                self.path=path.reverse()
+                self.path=path
                 return #path
 
             open_list.pop(0)
@@ -329,11 +327,12 @@ def main():
     """
     executes the assignment
     """
-    
+
     start = (-1.0,-5.0)
     goal = (4.0,4.0)
     grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
     astar = Astar(start, goal, grid_map)
+    print astar.path
     plot(grid_map,astar.path,start,goal)
 
 if __name__ == '__main__':
