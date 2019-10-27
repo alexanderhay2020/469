@@ -106,6 +106,9 @@ class Grid(object):
     def landmarks(self):
         """
         defines landmarks and their node cost
+
+        Attributes:
+
         """
         inflate = 0.3 # Relevant for Part A #6 of HW1
 
@@ -143,26 +146,19 @@ class Grid(object):
 
         return (x, y)
 
-
-    # def grid_to_world(self, position): # grid to world
-    #     """
-    #     translate i,j coordinates to x,y world coordinates
-    #     """
-    #     x_coord = []
-    #     y_coord = []
-    #     if hasattr(position[0], "__len__"):
-    #         for i, j in position:
-    #             x_coord.append(self.cell_size * (i + 0.5) - 2)
-    #             y_coord.append(self.cell_size * (j + 0.5) - 6)
-    #         return np.transpose(np.array([x_coord, y_coord]))
-    #     else:
-    #         x_coord.append(self.cell_size * (position[0] + 0.5) - 2)
-    #         y_coord.append(self.cell_size * (position[1] + 0.5) - 6)
-    #         return np.transpose(np.array([x_coord, y_coord]))
-
 class Astar(object): #start, goal, grid_map):
     """
     A* algorithm
+
+    Attributes:
+    start
+    goal
+
+    Fuctions:
+    heuristic
+    children
+    validation
+
     """
     def __init__(self, start, goal, grid_map):
 
@@ -196,8 +192,8 @@ class Astar(object): #start, goal, grid_map):
                     path.append(trace.position)
                     trace = trace.parent
 
-                print path
-                self.path=path
+                print path.reverse()
+                self.path=path.reverse()
                 return #path
 
             open_list.pop(0)
@@ -306,17 +302,6 @@ class Astar(object): #start, goal, grid_map):
             open_list.sort(key=lambda x: x.f)
 
             return open_list
-
-    def path_back(q):
-        """
-        text
-        """
-        path = []
-        trace = q
-        while trace is not None:
-            path.append(trace.position)
-            trace = trace.parent
-        return path[::-1] # Return reversed path
 
 def plot(grid,path,start,goal):
     """

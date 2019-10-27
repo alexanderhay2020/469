@@ -31,8 +31,10 @@ Defines attributes for each node<br/>
 + h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to goal (heuristic)
 + f &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g + h (cost function)
 
+
 #### Grid (Class)
 Sets grid_map node size and node cost
+
 ##### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
 + goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goal node in grid coordinates
@@ -47,5 +49,14 @@ Sets grid_map node size and node cost
 + world_to_grid &nbsp;&nbsp; converts world points to their nodes points
 
 
+#### Astar (Class)
+A* algorithm<br/>
+##### Attributes:
++ start &nbsp;&nbsp;&nbsp;&nbsp; start location relative to the grip map
++ goal &nbsp;&nbsp;&nbsp;&nbsp; goal location relative to the grip
 
+##### Functions:
++ heuristic &nbsp;&nbsp; calculates the minimum cost from node location to goal
++ children &nbsp;&nbsp;&nbsp; returns a list of potential node children
++ validation &nbsp;&nbsp;&nbsp; vets children against open and closed lists with their f and h values, returns updated open list sorted by f values
 <!-- **bold** -->
