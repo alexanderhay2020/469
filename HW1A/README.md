@@ -27,7 +27,7 @@ ME 469, HW1, Part B
 
 ##### Parameters:
 + parent &nbsp;&nbsp;&nbsp; tuple (x,y) of parent node, starting node has no parent
-+ position &nbsp;&nbsp;&nbsp; tuple (x,y) of itself
++ position &nbsp; tuple (x,y) of itself
 
 ##### Attributes:
 + parent &nbsp;&nbsp;&nbsp;&nbsp; parent node
@@ -62,8 +62,8 @@ ME 469, HW1, Part B
 &nbsp;&nbsp; A* algorithm
 
 ##### Parameters:
-+ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw start location
-+ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw goal location
++ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw start location
++ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw goal location
 + grid_map &nbsp;&nbsp;&nbsp; map created by Grid class
 
 ##### Attributes:
