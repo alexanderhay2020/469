@@ -24,6 +24,11 @@ ME 469, HW1, Part B
 
 #### Node (Class)
 &nbsp;&nbsp;Defines attributes for each node<br/>
+
+##### Parameters:
++ parent &nbsp;&nbsp;&nbsp; tuple (x,y) of parent node, starting node has no parent
++ position &nbsp;&nbsp;&nbsp; tuple (x,y) of itself
+
 ##### Attributes:
 + parent &nbsp;&nbsp;&nbsp;&nbsp; parent node
 + position &nbsp; (x,y)
@@ -34,6 +39,10 @@ ME 469, HW1, Part B
 
 #### Grid (Class)
 &nbsp;&nbsp;Sets grid_map node size and node cost
+##### Parameters:
++ node size &nbsp;&nbsp;&nbsp; float of the size of the node in meters
++ start &nbsp;&nbsp;&nbsp; tuple (x,y) of start node
++ goal &nbsp;&nbsp;&nbsp; tuple (x,y) of goal node
 
 ##### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
@@ -50,7 +59,13 @@ ME 469, HW1, Part B
 
 
 #### Astar (Class)
-&nbsp;&nbsp; A* algorithm<br/>
+&nbsp;&nbsp; A* algorithm
+
+##### Parameters:
++ start &nbsp;&nbsp;&nbsp;&nbsp; raw start location
++ goal &nbsp;&nbsp;&nbsp;&nbsp; raw goal location
++ grid_map &nbsp;&nbsp;&nbsp; map created by Grid class
+
 ##### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp; start location relative to the grip map
 + goal &nbsp;&nbsp;&nbsp;&nbsp; goal location relative to the grip

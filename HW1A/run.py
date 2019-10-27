@@ -53,6 +53,11 @@ class Node(object):
     """
     creates attributes for each node in grid environment
 
+    Parameters:
+    parent --- tuple (x,y) of parent node, starting node has no parent
+    position - tuple (x,y) of itself
+
+    Attributes:
     self.parent = parent node
     self.position = (x,y)
     self.g = distance from node to start
@@ -71,6 +76,11 @@ class Node(object):
 class Grid(object):
     """
     sets grid_map size and node cost
+
+    Parameters:
+    node size ----- float of the size of the node in meters
+    start --------- tuple (x,y) of start node
+    goal ---------- tuple (x,y) of goal node
 
     Attributes:
     start --------- starting node in grid coordinates
@@ -146,6 +156,11 @@ class Grid(object):
 class Astar(object): #start, goal, grid_map):
     """
     A* algorithm
+
+    Parameters:
+    start ------ raw start location
+    goal ------- raw goal location
+    grid_map --- map created by Grid class
 
     Attributes:
     start ------ start location relative to the grip map
