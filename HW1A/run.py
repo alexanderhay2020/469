@@ -106,9 +106,6 @@ class Grid(object):
     def landmarks(self):
         """
         defines landmarks and their node cost
-
-        Attributes:
-
         """
         inflate = 0.3 # Relevant for Part A #6 of HW1
 
@@ -151,14 +148,13 @@ class Astar(object): #start, goal, grid_map):
     A* algorithm
 
     Attributes:
-    start
-    goal
+    start ------ start location relative to the grip map
+    goal ------- goal location relative to the grip map
 
     Fuctions:
-    heuristic
-    children
-    validation
-
+    heuristic -- calculates the minimum cost from node location to goal
+    children --- returns a list of potential node children
+    validation - vets children against open and closed lists with their f and h values, returns updated open list sorted by f values
     """
     def __init__(self, start, goal, grid_map):
 
@@ -331,10 +327,9 @@ def plot(grid,path,start,goal):
 
 def main():
     """
-    text
+    executes the assignment
     """
-
-
+    
     start = (-1.0,-5.0)
     goal = (4.0,4.0)
     grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1

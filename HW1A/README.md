@@ -23,7 +23,7 @@ ME 469, HW1, Part B
 ### Classes and Functions
 
 #### Node (Class)
-Defines attributes for each node<br/>
+&nbsp;&nbsp;Defines attributes for each node<br/>
 ##### Attributes:
 + parent &nbsp;&nbsp;&nbsp;&nbsp; parent node
 + position &nbsp; (x,y)
@@ -33,7 +33,7 @@ Defines attributes for each node<br/>
 
 
 #### Grid (Class)
-Sets grid_map node size and node cost
+&nbsp;&nbsp;Sets grid_map node size and node cost
 
 ##### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
@@ -50,7 +50,7 @@ Sets grid_map node size and node cost
 
 
 #### Astar (Class)
-A* algorithm<br/>
+&nbsp;&nbsp; A* algorithm<br/>
 ##### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp; start location relative to the grip map
 + goal &nbsp;&nbsp;&nbsp;&nbsp; goal location relative to the grip
@@ -59,4 +59,13 @@ A* algorithm<br/>
 + heuristic &nbsp;&nbsp; calculates the minimum cost from node location to goal
 + children &nbsp;&nbsp;&nbsp; returns a list of potential node children
 + validation &nbsp;&nbsp;&nbsp; vets children against open and closed lists with their f and h values, returns updated open list sorted by f values
+
+
+#### plot (Function)
+&nbsp;&nbsp; Plots grid map information
+##### Parameters:
++ grid &nbsp;&nbsp; grid_map that Grid class created
++ path &nbsp;&nbsp; path that Astar class creates
++ start &nbsp;&nbsp; given
++ goal &nbsp;&nbsp; given
 <!-- **bold** -->
