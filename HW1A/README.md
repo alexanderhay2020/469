@@ -1,7 +1,7 @@
 # ME 469 - Homework 1B
 
 Alexander Hay<br/>
-ME 469, HW1, Part B
+ME 469, HW1, Part B<br/>
 A* Search and Navigation
 
 ---------------------------------
