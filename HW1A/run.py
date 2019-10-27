@@ -70,18 +70,34 @@ class Node(object):
 
 class Grid(object):
     """
-    creates environment
-    populates environment with landmarks
-    + assigns landmark
+    sets grid_map size and node cost
+
+    Attributes:
+    start --------- starting node in grid coordinates
+    goal ---------- goal node in grid coordinates
+    landmark_list - list of landmarks (used for debugging)
+    xedges -------- an array of the x coordinates for nodes the grid_map is built of
+    yedges -------- an array of the y coordinates for nodes the grid_map is built of
+    node_cost ----- the cost of entering that node
+
+    Functions:
+    set_cell ------ determines how many nodes to populate world with and their size
+    landmarks ----- converts landmark point to a node, sets node_cost of landmark node to 1000
+    world_to_grid - converts points to their nodes
     """
 
-    def __init__(self, size):
+    def __init__(self, size, start, goal):
+        self.landmark_list = []
         self.set_cell(size)
+        self.start=self.world_to_grid(start)
+        self.goal=self.world_to_grid(goal)
+
 
     def set_cell(self, size):
         """
-        sets grid_map size and node cost
+        text
         """
+
         self.xedges = np.arange(-2,5,size)
         self.yedges = np.arange(-6,6,size)
         self.node_cost = np.ones([len(self.xedges),len(self.yedges)]) # initiaizes each cell cost to be one
@@ -103,11 +119,15 @@ class Grid(object):
             for j in range(len(self.yedges)): # col index
                 if landmark[k,2] >= self.yedges[j] and landmark[k,2] <= self.yedges[j]+1:
                     y = j
-
             self.node_cost[x][y] = 1000 # cost of landmark
 
-            # print str(k) + ": " + str(i) + ", " + str(j)
-            # print self.node_cost[i][j]
+            # new=self.world_to_grid((x,y)
+            # #newy=self.world_to_grid(y)
+            # self.landmark_list.append(new)
+            # print "landmark: " + str(k)# + str(i) + ", " + str(j)
+            # print str(x) + ", " + str(y)
+            # print
+            # # print self.node_cost[i][j]
 
     def world_to_grid(self, position): # world to grid
         """
@@ -147,11 +167,11 @@ class Astar(object): #start, goal, grid_map):
     def __init__(self, start, goal, grid_map):
 
         # initiatialize costs
-        start = grid_map.world_to_grid(start)
-        goal = grid_map.world_to_grid(goal)
+        self.start = grid_map.world_to_grid(start)
+        self.goal = grid_map.world_to_grid(goal)
 
-        start_node = Node(None,start)
-        goal_node = Node(None,goal)
+        start_node = Node(None,self.start)
+        goal_node = Node(None,self.goal)
 
         start_node.g = 0 # distance from node to start
         start_node.h = self.heuristic(start_node.position,goal_node.position) # distance from node to goal
@@ -164,8 +184,8 @@ class Astar(object): #start, goal, grid_map):
 
         print "start node: " + str(start_node.position)
         print "goal node: " + str(goal_node.position)
-        # while open_list[0] != goal_node:
-        for loop in range(5):
+        while open_list[0] != goal_node:
+        # for loop in range(5):
 
             q = open_list[0]
 
@@ -176,7 +196,7 @@ class Astar(object): #start, goal, grid_map):
                     path.append(trace.position)
                     trace = trace.parent
 
-                #print path
+                print path
                 self.path=path
                 return #path
 
@@ -195,7 +215,7 @@ class Astar(object): #start, goal, grid_map):
         straight_dist returns the opposite, the largest of the x and y differences
         cost = straight_dist + corner_cut (it cuts the corner)
         """
-        transition_cost = 1 # defined by Grid.node cost I think but I don't know how to access that information
+        transition_cost = 1 # this should be defined by Grid.node cost I think but I don't know how to access that information
         corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
         straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
         cost = (straight_dist + (math.sqrt(2) * corner_cut)) * transition_cost
@@ -298,13 +318,22 @@ class Astar(object): #start, goal, grid_map):
             trace = trace.parent
         return path[::-1] # Return reversed path
 
-def plot(grid,path):
+def plot(grid,path,start,goal):
     """
     plots grid_map information
     """
 
     fig1 = plt.figure()
-    plt.imshow(grid.node_cost.T,cmap='plasma',origin='lower',extent=[-2,5,-6,6])
+    plt.imshow(grid.node_cost.T,origin='lower',extent=[-2,5,-6,6])
+    plt.plot(grid.start[0],grid.start[1],'go',label="Start Node")
+    plt.plot(grid.goal[0],grid.goal[1],'bx',label="Goal Node")
+    # for i in range(len(grid.landmark_list)):
+    #     lm = grid.landmark_list[i]
+    #     plt.plot(lm[0],lm[1],'ro',label="Landmarks")
+    # for i in range(len(path)-1):
+    #     from_node = path[i]
+    #     to_node = path[i+1]
+    #     plt.plot(path[i],path[i+1],'r-',label="path")
     ax = plt.gca();
     ax.set_xticks(grid.xedges)
     ax.set_yticks(grid.yedges)
@@ -319,12 +348,13 @@ def main():
     """
     text
     """
-    grid_map = Grid(1) # CHANGE THIS FOR PART A #6 OF HW1
 
-    start = (0.5,-1.5)
-    goal = (0.5,1.5)
 
+    start = (-1.0,-5.0)
+    goal = (4.0,4.0)
+    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
     astar = Astar(start, goal, grid_map)
-    plot(grid_map,astar.path)
+    plot(grid_map,astar.path,start,goal)
+
 if __name__ == '__main__':
     main()
