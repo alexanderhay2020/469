@@ -24,7 +24,7 @@ ME 469, HW1, Part B
 
 #### Node (Class)
 Defines attributes for each node<br/>
-Attributes:
+###### Attributes:
 + parent &nbsp;&nbsp;&nbsp; parent node
 + position &nbsp; (x,y)
 + g &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to start
@@ -33,7 +33,7 @@ Attributes:
 
 ##### Grid (Class)
 Sets grid_map node size and node cost
-Attributes:
+###### Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
 + goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goal node in grid coordinates
 + landmark_list &nbsp;&nbsp; list of landmarks (used for debugging)
