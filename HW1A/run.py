@@ -83,7 +83,7 @@ class Grid(object):
     Functions:
     set_cell ------ determines how many nodes to populate world with and their size
     landmarks ----- converts landmark point to a node, sets node_cost of landmark node to 1000
-    world_to_grid - converts points to their nodes
+    world_to_grid - converts world points to their nodes points
     """
 
     def __init__(self, size, start, goal):
@@ -95,7 +95,7 @@ class Grid(object):
 
     def set_cell(self, size):
         """
-        text
+        determines how many nodes to populate world with and their size
         """
 
         self.xedges = np.arange(-2,5,size)
@@ -105,7 +105,7 @@ class Grid(object):
 
     def landmarks(self):
         """
-        marks landmarks and their node cost
+        defines landmarks and their node cost
         """
         inflate = 0.3 # Relevant for Part A #6 of HW1
 
