@@ -8,12 +8,12 @@ ME 469, HW1, Part B
 
 ### Imports and Global Variables:
 
-###### Imports:
+##### Imports:
 + numpy
 + matplotlib
 + math
 
-###### Global Variables
+##### Global Variables
 + barcodes -> ds1_Barcodes.dat
 + groundtruth -> ds1_Groundtruth.dat
 + landmark -> ds1_Landmark_Groundtruth.dat
@@ -22,7 +22,7 @@ ME 469, HW1, Part B
 
 ### Classes and Functions
 
-###### Node (Class)
+#### Node (Class)
 Defines attributes for each node<br/>
 Attributes:
 + parent &nbsp;&nbsp;&nbsp; parent node
@@ -31,7 +31,7 @@ Attributes:
 + h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance from node to goal (heuristic)
 + f &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g + h (cost function)
 
-###### Grid (Class)
+##### Grid (Class)
 Sets grid_map node size and node cost
 Attributes:
 + start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; starting node in grid coordinates
