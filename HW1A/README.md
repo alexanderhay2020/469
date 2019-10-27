@@ -62,8 +62,8 @@ ME 469, HW1, Part B
 &nbsp;&nbsp; A* algorithm
 
 ##### Parameters:
-+ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw start location
-+ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw goal location
++ start &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw start location
++ goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raw goal location
 + grid_map &nbsp;&nbsp;&nbsp; map created by Grid class
 
 ##### Attributes:
