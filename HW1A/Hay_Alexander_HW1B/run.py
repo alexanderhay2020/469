@@ -37,6 +37,10 @@ Part A:
         * Display explored cells
         * Display planned path
 """
+# a = open_list[0]
+            # print a.position
+            # print a.h
+            # print
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,19 +95,19 @@ class Grid(object):
     node_cost ----- the cost of entering that node
 
     Functions:
-    set_cell ------ determines how many nodes to populate world with and their size
+    set_node ------ determines how many nodes to populate world with and their size
     landmarks ----- converts landmark point to a node, sets node_cost of landmark node to 1000
     world_to_grid - converts world points to their nodes points
     """
 
     def __init__(self, size, start, goal):
-        self.landmark_list = []
-        self.set_cell(size)
+        # self.landmark_list = []
+        self.set_node(size)
         self.start=self.world_to_grid(start)
         self.goal=self.world_to_grid(goal)
 
 
-    def set_cell(self, size):
+    def set_node(self, size):
         """
         determines how many nodes to populate world with and their size
         """
@@ -120,7 +124,9 @@ class Grid(object):
         inflate = 0.3 # Relevant for Part A #6 of HW1
 
         for k in range(len(landmark)):
+            # print k
             for i in range(len(self.xedges)): # row index
+                # print i
                 if landmark[k,1] >= self.xedges[i] and landmark[k,1] <= self.xedges[i]+1:
                     x = i
 
@@ -166,7 +172,7 @@ class Astar(object): #start, goal, grid_map):
         # initiatialize costs
         self.start = grid_map.world_to_grid(start)
         self.goal = grid_map.world_to_grid(goal)
-
+        # print self.goal
         start_node = Node(None,self.start)
         goal_node = Node(None,self.goal)
 
@@ -204,6 +210,7 @@ class Astar(object): #start, goal, grid_map):
 
         transistion_cost is defined by Grid.node, but I don't know how to access that info, so it's redefined here
         hypotenuse is the straight line distance to goal
+
         cost is the hypotenuse times the transition cost
         """
         transition_cost = 1 #grid.node_cost this should be defined by Grid.node cost I think but I don't know how to access that information
@@ -227,11 +234,13 @@ class Astar(object): #start, goal, grid_map):
 
                 position = (node.position[0] + i, node.position[1] + j)
                 # index = index + 1
-                parent = node
-                child = Node(parent=parent, position=position)
+
+                child = Node(parent=node, position=position)
                 # print "child #: " + str(index)
                 # print "child position: " + str(child.position)
-                print grid_map.node_cost[position[0]][position[1]]
+
+                # print position
+                # print grid_map.node_cost
                 child.g = grid_map.node_cost[position[0]][position[1]] + child.parent.g
                 child.h = self.heuristic(child.position, goal.position)
                 child.f = child.g + child.h
@@ -265,7 +274,7 @@ class Astar(object): #start, goal, grid_map):
                     # if child IS in closed list, checks if child.f is greater than closed.f
                     # if it IS greater, child is removed from the child_list
                     if child_list[i].f > closed_list[j].f:
-                        print yes
+                        # print yes
                         child_list.remove(child_list[i])
 
                     # if child IS in closed list, and if child.f EQUALS closed.f
@@ -277,7 +286,7 @@ class Astar(object): #start, goal, grid_map):
 
             # if child IS NOT in closed list
             # checks if child is in open list
-            if (child_list[i] in closed_list):
+            if (child_list[i] in open_list):
                 for k in range(len(open_list)):
 
                     # if child IS in open list, checks if child.f is greater than open.f
@@ -296,6 +305,10 @@ class Astar(object): #start, goal, grid_map):
             # list is sorted by f
             open_list.append(child_list[i])
             open_list.sort(key=lambda x: x.f)
+            # a = open_list[0]
+            # print a.position
+            # print a.h
+            # print
 
             return open_list
 
@@ -452,7 +465,7 @@ def main():
         size --- sets the node size, defined by hw problem
         """
         print "Set " + str(i) + ": "
-        if method == "offline":
+        if method == "Offline":
             grid_map = Grid(size,start,goal)
             astar = Astar(start, goal, grid_map)
             print "Start Node: " + str(start)
@@ -460,7 +473,7 @@ def main():
             print "Path: " + str(astar.path)
             plot(grid_map,astar.path,start,goal,i,method)
 
-        elif method == "online":
+        elif method == "Online":
             grid_map = Grid(size,start,goal)
             astar = Astar_online(start, goal, grid_map)
             print "Start Node: " + str(start)
@@ -477,10 +490,16 @@ def main():
     print "Part A, #5"
     for i in range(3):
         do_hw(start_list1[i],goal_list1[i],i+1,"Online",1)
+    print
 
     print "Part A, #7"
     for i in range(3):
-        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",0.1)
+        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",10)
+    print
+
+    print "Part A, #7*"
+    for i in range(2):
+        do_hw(start_list2[i],goal_list2[i],i+7,"Offline",1)
 
 if __name__ == '__main__':
     main()

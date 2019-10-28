@@ -120,7 +120,9 @@ class Grid(object):
         inflate = 0.3 # Relevant for Part A #6 of HW1
 
         for k in range(len(landmark)):
+            # print k
             for i in range(len(self.xedges)): # row index
+                # print i
                 if landmark[k,1] >= self.xedges[i] and landmark[k,1] <= self.xedges[i]+1:
                     x = i
 
@@ -228,8 +230,8 @@ class Astar(object): #start, goal, grid_map):
 
                 position = (node.position[0] + i, node.position[1] + j)
                 # index = index + 1
-                parent = node
-                child = Node(parent=parent, position=position)
+
+                child = Node(parent=node, position=position)
                 # print "child #: " + str(index)
                 # print "child position: " + str(child.position)
 
@@ -486,10 +488,10 @@ def main():
         do_hw(start_list1[i],goal_list1[i],i+1,"Online",1)
     print
 
-    # print "Part A, #7"
-    # for i in range(3):
-    #     do_hw(start_list2[i],goal_list2[i],i+1,"Offline",10)
-    # print
+    print "Part A, #7"
+    for i in range(3):
+        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",10)
+    print
 
     print "Part A, #7*"
     for i in range(2):

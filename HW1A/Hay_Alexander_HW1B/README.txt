@@ -55,7 +55,7 @@ Code Breakdown
       + node_cost ----- the cost of entering that node
 
       Functions:
-      + set_cell ------ determines how many nodes to populate world with and their size
+      + set_node ------ determines how many nodes to populate world with and their size
       + landmarks ----- converts landmark point to a node, sets node_cost of landmark node to 1000
       + world_to_grid - converts world points to their nodes points
 
