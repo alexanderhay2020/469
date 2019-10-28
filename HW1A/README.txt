@@ -89,3 +89,6 @@ Code Breakdown
 
     main (Function)
     Executes assignment
+
+      Functions:
+      + do_hw - automates inputs for the homework problem

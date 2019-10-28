@@ -10,6 +10,10 @@ Run 'run.py' via python.
 
 Press 'q' to step through figures
 
+#7 breaks the program
+
+Part B not attempted.
+
 ---------------------------------
 ## Code Breakdown
 
@@ -46,6 +50,7 @@ Press 'q' to step through figures
 
 #### Grid (Class)
 &nbsp;&nbsp;Sets grid_map node size and node cost
+
 ##### Parameters:
 + node size &nbsp;&nbsp;&nbsp; float of the size of the node in meters
 + start &nbsp;&nbsp;&nbsp; tuple (x,y) of start node
@@ -85,6 +90,7 @@ Press 'q' to step through figures
 
 #### plot (Function)
 &nbsp;&nbsp; Plots grid map information
+
 ##### Parameters:
 + grid &nbsp;&nbsp;&nbsp; grid_map that Grid class created
 + path &nbsp;&nbsp; path that Astar class creates
@@ -94,4 +100,6 @@ Press 'q' to step through figures
 #### main (Function)
 Executes assignment
 
+##### Functions:
++ do_hw &nbsp;&nbsp; automates inputs for the homework problem
 <!-- **bold** -->

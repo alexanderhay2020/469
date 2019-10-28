@@ -121,8 +121,6 @@ class Grid(object):
 
         for k in range(len(landmark)):
             for i in range(len(self.xedges)): # row index
-                # print landmark[k,1]
-                # print self.xedges[i]
                 if landmark[k,1] >= self.xedges[i] and landmark[k,1] <= self.xedges[i]+1:
                     x = i
 
@@ -130,14 +128,6 @@ class Grid(object):
                 if landmark[k,2] >= self.yedges[j] and landmark[k,2] <= self.yedges[j]+1:
                     y = j
             self.node_cost[x][y] = 1000 # cost of landmark
-
-            # new=self.world_to_grid((x,y)
-            # #newy=self.world_to_grid(y)
-            # self.landmark_list.append(new)
-            # print "landmark: " + str(k)# + str(i) + ", " + str(j)
-            # print str(x) + ", " + str(y)
-            # print
-            # # print self.node_cost[i][j]
 
     def world_to_grid(self, position): # world to grid
         """
@@ -182,7 +172,7 @@ class Astar(object): #start, goal, grid_map):
 
         start_node.g = 0 # distance from node to start
         start_node.h = self.heuristic(start_node.position,goal_node.position) # distance from node to goal
-        start_node.f = start_node.g + start_node.h
+        start_node.f = start_node.g + start_node.h # cost function
 
         open_list = [] # all generated nodes
         closed_list = [] # all expanded nodes
@@ -230,8 +220,7 @@ class Astar(object): #start, goal, grid_map):
         returns list of possible node children
         """
         child_list = []
-        #print node.position
-        # print goal.position
+
         index = 0
         for i in range(-1,2):
             for j in range(-1,2):
@@ -242,14 +231,13 @@ class Astar(object): #start, goal, grid_map):
                 child = Node(parent=parent, position=position)
                 # print "child #: " + str(index)
                 # print "child position: " + str(child.position)
+                print grid_map.node_cost[position[0]][position[1]]
                 child.g = grid_map.node_cost[position[0]][position[1]] + child.parent.g
                 child.h = self.heuristic(child.position, goal.position)
                 child.f = child.g + child.h
 
                 if child.position == node.position:
                     continue
-                #if child.postion == goal.position:
-                    #return child
                 elif child.position[0] < grid_map.xedges[0] or child.position[0] > grid_map.xedges[-1]:
                     continue
                 elif child.position[1] < grid_map.yedges[0] or child.position[1] > grid_map.yedges[-1]:
@@ -363,7 +351,7 @@ class Astar_online(object): #start, goal, grid_map):
 
             child_list = self.children(q, goal_node, grid_map)
             open_list = child_list
-            
+
     def heuristic(self, position, goal):
         """
         calculates minimum cost from node to goal
@@ -375,9 +363,6 @@ class Astar_online(object): #start, goal, grid_map):
         transition_cost = 1 #grid.node_cost this should be defined by Grid.node cost I think but I don't know how to access that information
         hypotenuse = math.sqrt((position[0] - goal[0])**2 + (position[1] - goal[1])**2)
         cost = hypotenuse * transition_cost
-        # corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
-        # straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
-        # cost = (straight_dist + corner_cut) * transition_cost # cutting corners does not affect cost. moving diagonal=1, moving udlr=1
         # # print "cost: " + str(cost)
         return cost
 
@@ -386,8 +371,7 @@ class Astar_online(object): #start, goal, grid_map):
         returns list of possible node children
         """
         child_list = []
-        #print node.position
-        # print goal.position
+
         index = 0
         for i in range(-1,2):
             for j in range(-1,2):
@@ -404,8 +388,6 @@ class Astar_online(object): #start, goal, grid_map):
 
                 if child.position == node.position:
                     continue
-                #if child.postion == goal.position:
-                    #return child
                 elif child.position[0] < grid_map.xedges[0] or child.position[0] > grid_map.xedges[-1]:
                     continue
                 elif child.position[1] < grid_map.yedges[0] or child.position[1] > grid_map.yedges[-1]:
@@ -420,9 +402,9 @@ class Astar_online(object): #start, goal, grid_map):
         #     print child_list[i].f
         #     print
 
-        return child_list # returns best child
+        return child_list
 
-def plot(grid,path,start,goal,num):
+def plot(grid,path,start,goal,num,method):
     """
     plots grid_map information
     """
@@ -439,7 +421,7 @@ def plot(grid,path,start,goal,num):
     ax.set_xticks(grid.xedges)
     ax.set_yticks(grid.yedges)
 
-    plt.title('Figure ' + str(num))
+    plt.title('Figure ' + str(num) + ", " + method)
     plt.xlabel("x position (m)")
     plt.ylabel("y position (m)")
     plt.grid(which='major',axis='both')
@@ -449,51 +431,56 @@ def plot(grid,path,start,goal,num):
 def main():
     """
     executes the assignment
+
+    Fuctions:
+    do_hw - automates inputs and parameters for hw questions.
     """
+    start_list1 = [(0.5,-1.5),(4.5,3.5),(-0.5,5.5)]
+    goal_list1 = [(0.5,1.5),(4.5,-1.5),(1.5,-3.5)]
+    start_list2 = [(2.45,-3.55),(4.95,-0.05),(-0.55,1.45)]
+    goal_list2 = [(0.95,-1.55),(2.45,0.25),(1.95,3.95)]
+
+    def do_hw(start,goal,i,method,size):
+        """
+        Automates HW
+
+        Parameters:
+        start -- start location defined by hw problem
+        goal --- goal location defined by hw problem
+        i ------ iterator for figures
+        method - runs the algorithm offline or online, defined by hw problem
+        size --- sets the node size, defined by hw problem
+        """
+        print "Set " + str(i) + ": "
+        if method == "offline":
+            grid_map = Grid(size,start,goal)
+            astar = Astar(start, goal, grid_map)
+            print "Start Node: " + str(start)
+            print "Goal Node: " + str(goal)
+            print "Path: " + str(astar.path)
+            plot(grid_map,astar.path,start,goal,i,method)
+
+        elif method == "online":
+            grid_map = Grid(size,start,goal)
+            astar = Astar_online(start, goal, grid_map)
+            print "Start Node: " + str(start)
+            print "Goal Node: " + str(goal)
+            print "Path: " + str(astar.path)
+            plot(grid_map,astar.path,start,goal,i+3,method)
+        print
+
     print "Part A, #3"
-    print "Set 1:"
-    start = (0.5,-1.5)
-    goal = (0.5,1.5)
-    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
-    astar = Astar(start, goal, grid_map)
-    print "Start Node: " + str(start)
-    print "Goal Node: " + str(goal)
-    print "Path: " + str(astar.path)
-    plot(grid_map,astar.path,start,goal,1)
+    for i in range(3):
+        do_hw(start_list1[i],goal_list1[i],i+1,"Offline",1)
     print
 
-    print "Set 2:"
-    start = (4.5,3.5)
-    goal = (4.5,-1.5)
-    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
-    astar = Astar(start, goal, grid_map)
-    print "Start Node: " + str(start)
-    print "Goal Node: " + str(goal)
-    print "Path: " + str(astar.path)
-    plot(grid_map,astar.path,start,goal,2)
-    print
+    print "Part A, #5"
+    for i in range(3):
+        do_hw(start_list1[i],goal_list1[i],i+1,"Online",1)
 
-    print "Set 3:"
-    start = (-0.5,5.5)
-    goal = (1.5,-3.5)
-    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
-    astar = Astar(start, goal, grid_map)
-    print "Start Node: " + str(start)
-    print "Goal Node: " + str(goal)
-    print "Path: " + str(astar.path)
-    plot(grid_map,astar.path,start,goal,3)
-    print
-
-    print "Set 3:"
-    start = (-0.5,5.5)
-    goal = (1.5,-3.5)
-    grid_map = Grid(1,start,goal) # CHANGE THIS FOR PART A #6 OF HW1
-    astar = Astar_online(start, goal, grid_map)
-    print "Start Node: " + str(start)
-    print "Goal Node: " + str(goal)
-    print "Path: " + str(astar.path)
-    plot(grid_map,astar.path,start,goal,3)
-    print
+    print "Part A, #7"
+    for i in range(3):
+        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",0.1)
 
 if __name__ == '__main__':
     main()
