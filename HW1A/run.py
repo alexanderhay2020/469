@@ -452,7 +452,7 @@ def main():
         size --- sets the node size, defined by hw problem
         """
         print "Set " + str(i) + ": "
-        if method == "offline":
+        if method == "Offline":
             grid_map = Grid(size,start,goal)
             astar = Astar(start, goal, grid_map)
             print "Start Node: " + str(start)
@@ -460,7 +460,7 @@ def main():
             print "Path: " + str(astar.path)
             plot(grid_map,astar.path,start,goal,i,method)
 
-        elif method == "online":
+        elif method == "Online":
             grid_map = Grid(size,start,goal)
             astar = Astar_online(start, goal, grid_map)
             print "Start Node: " + str(start)
@@ -470,17 +470,23 @@ def main():
         print
 
     print "Part A, #3"
-    for i in range(3):
+    for i in range(2):
         do_hw(start_list1[i],goal_list1[i],i+1,"Offline",1)
     print
 
     print "Part A, #5"
     for i in range(3):
         do_hw(start_list1[i],goal_list1[i],i+1,"Online",1)
+    print
 
-    print "Part A, #7"
+    # print "Part A, #7"
+    # for i in range(3):
+    #     do_hw(start_list2[i],goal_list2[i],i+1,"Offline",0.1)
+    # print
+
+    print "Part A, #7*"
     for i in range(3):
-        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",0.1)
+        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",1)
 
 if __name__ == '__main__':
     main()
