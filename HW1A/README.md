@@ -65,7 +65,7 @@ Part B not attempted.
 + node_cost &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the cost of entering that node
 
 ##### Functions:
-+ set_cell &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; determines how many nodes to populate world with and their size
++ set_node &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; determines how many nodes to populate world with and their size
 + landmarks &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; converts landmark point to a node, sets node_cost of landmark node to 1000
 + world_to_grid &nbsp;&nbsp; converts world points to their nodes points
 
