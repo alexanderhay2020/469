@@ -214,7 +214,7 @@ class Astar(object): #start, goal, grid_map):
         cost is the hypotenuse times the transition cost
         """
         transition_cost = 1 #grid.node_cost this should be defined by Grid.node cost I think but I don't know how to access that information
-        hypotenuse = math.sqrt((position[0] - goal[0])**2 + (position[1] - goal[1])**2)
+        hypotenuse = (0.5) * math.sqrt((position[0] - goal[0])**2 + (position[1] - goal[1])**2)
         cost = hypotenuse * transition_cost
         # corner_cut = min(abs(position[0] - goal[0]), abs(position[1] - goal[1])) # returns x difference or y difference, whichever is shorter
         # straight_dist = max(abs(position[0] - goal[0]), abs(position[1] - goal[1]))
@@ -492,10 +492,10 @@ def main():
         do_hw(start_list1[i],goal_list1[i],i+1,"Online",1)
     print
 
-    print "Part A, #7"
-    for i in range(3):
-        do_hw(start_list2[i],goal_list2[i],i+1,"Offline",10)
-    print
+    # print "Part A, #7"
+    # for i in range(3):
+    #     do_hw(start_list2[i],goal_list2[i],i+1,"Offline",10)
+    # print
 
     print "Part A, #7*"
     for i in range(2):

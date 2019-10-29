@@ -43,7 +43,7 @@ A* Algorithm:
 
     Initialize grid
 
-1   Initialize node costs (1)
+    Initialize node costs (1)
         for i in range(len(xedges)):
             for j in range(len(yedges)):
                 grid_map[i,j].g = 1
@@ -60,7 +60,7 @@ A* Algorithm:
     goal = grid_map(goal_coords)
 
     Initialize costs
-4       node.g = distance from node to start
+        node.g = distance from node to start
             node.g = 1
         node.h = distance from node to goal; heuristic
         node.f = g + h cost function; estimate of best route to node (we want the lowest cost)
@@ -88,14 +88,14 @@ A* Algorithm:
             *calculate child's parameters
             for i in range(len(child_list)):
                 child_list[i].parent = q
-2               child_list[i].g = child_list[i].parent.g + node.g
+                child_list[i].g = child_list[i].parent.g + node.g
             /loop
 
             *check if any children is the goal
             *putting this here means that the algorithm doesn't care if the goal is a landmark
             for i in range(len(child_list)):
                 if child_list[i] == goal:
-3                   return child_list[i].parent
+                    return child_list[i].parent
 
             *checks if child is parent
             for i in range(len(child_list)):
@@ -110,7 +110,7 @@ A* Algorithm:
                 endif
             /loop
 
-2           *check if child is a landmark
+            *check if child is a landmark
             for i in range(len(child_list)):
                 for j in range(len(landmark)):
                     if child_list[i] == landmark[j]:
