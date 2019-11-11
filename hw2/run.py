@@ -1,3 +1,22 @@
+"""
+Alexander Hay
+HW2 - Machine Learning
+
+Learning aim: Motion model
+Learning algorithm: Neural Network
+Dataset: DS0
+ + Training Data: (v, w) - odometry
+                  (x, y, theta) - groundtruth
+
+ + Test Data: (v, w) - odometry
+
+Part A
+1. build training set
+
+2. code learning algorithm
+
+"""
+
 import numpy as np
 
 def sigmoid(x):
@@ -42,7 +61,7 @@ test_input = np.array([[1, 0, 0],
 # an input of 0/1 in the first column should output a 0/1
 
 np.random.seed(1) # for troubleshooting, can reproduce
-weights = np.random.random((3,1))
+weights = np.random.random((1,3)) # starting weight for each column
 
 print "Starting Weights: "
 print weights
@@ -51,8 +70,11 @@ print
 for i in range(1):
 
     input = training_inputs
-
-    output = sigmoid(np.dot(input,weights))
+    xw = np.dot(input,weights.T) # [4x3]*[3*1]=[4x1]
+    print "x*w: "
+    print xw
+    print
+    output = sigmoid(xw)
 
 print "Output after sigmoid function: "
 print output
