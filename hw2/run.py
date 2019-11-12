@@ -41,34 +41,36 @@ def sigmoid(x):
 def sigmoid_derivative(x):
     """
     defining derivative because I don't want to symbolically solve for it
+
+
     """
     x_prime = x*(1-x)
     return x_prime
 
-training_inputs = np.array([[0, 0, 1],
-                            [1, 1, 1],
-                            [1, 0, 1],
-                            [0, 1, 1]])
+training_input = np.array([[0, 0, 1],
+                           [1, 1, 1],
+                           [1, 0, 1],
+                           [0, 1, 1]])
 
-training_outputs = np.array([[0],
-                             [1],
-                             [1],
-                             [0]])
+training_output = np.array([[0],
+                            [1],
+                            [1],
+                            [0]])
 
 test_input = np.array([[1, 0, 0],
                        [1, 1, 0],
                        [0, 1, 0]])
 
-# expected output [[1],
-#                  [1],
-#                  [0]]
+test_output = np.array([[1],
+                        [1],
+                        [0]])
 # first index is from training video (https://www.youtube.com/watch?v=kft1AJ9WVDk)
 # second and third is verification
 # neuron should value first column and disregard second/third columns
 # an input of 0/1 in the first column should output a 0/1
 
 np.random.seed(1) # for troubleshooting, can reproduce
-weights = np.random.random((3,1)) # starting weight for each column (synapse)
+weights = np.random.random((len(test_input),1)) # starting weight for each column (synapse)
 
 print "Starting Weights: "
 print weights
@@ -78,14 +80,14 @@ for i in range(20000):
     """
     neuron
     """
-    input = training_inputs
+    input = test_input
     xw = np.dot(input,weights) # [4x3]*[3*1]=[4x1]
     # print "x*w: "
     # print xw
     # print
     output = sigmoid(xw)
 
-    error = training_outputs - output
+    error = test_output - output
 
     adjustments = error * sigmoid_derivative(output)
 
