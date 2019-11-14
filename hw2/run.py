@@ -33,7 +33,7 @@ def sigmoid_derivative(x):
     """
     args: x - some number
 
-    defining derivative because I don't want to symbolically solve for it
+    return: derivative of sigmid given x
     """
     x_prime = x*(1-x)
     return x_prime

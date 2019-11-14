@@ -19,33 +19,51 @@ Part A
 
 import numpy as np
 
-def sigmoid(x):
+class NeuralNet():
     """
-    args: x - some number
-
-    retrun: some value between 0 and 1 based on sigmoid function
-
-    Activation Function:
-    + Allows the neuron to react in a non-binary fashion (ie. not 0/1, true/false)
-    + Somewhat computationally expensive
-    + This is a parameter that can be changed to improve performance, though
-      sigmoid function seems to be the most common
-      + Sigmoid function is preferred because "the nonlinear properties of this
-        function means that the rate of change is slower at the extremes and
-        faster in the center.""
+    text
     """
-
-    return 1/(1+np.exp(-x))
-
-
-def sigmoid_derivative(x):
-    """
-    defining derivative because I don't want to symbolically solve for it
+    def __init__(self):
+        
+        np.random.seed(1) # for troubleshooting, can reproduce
+        self.weights = 2 * np.random.random((3,1)) - 1 # starting weight for each column (synapse)
 
 
-    """
-    x_prime = x*(1-x)
-    return x_prime
+    def sigmoid(x):
+        """
+        args: x - some number
+
+        retrun: some value between 0 and 1 based on sigmoid function
+
+        Activation Function:
+        + Allows the neuron to react in a non-binary fashion (ie. not 0/1, true/false)
+        + Somewhat computationally expensive
+        + This is a parameter that can be changed to improve performance, though
+          sigmoid function seems to be the most common
+          + Sigmoid function is preferred because "the nonlinear properties of this
+            function means that the rate of change is slower at the extremes and
+            faster in the center.""
+        """
+
+        return 1/(1+np.exp(-x))
+
+
+    def sigmoid_derivative(x):
+        """
+        defining derivative because I don't want to symbolically solve for it
+
+
+        """
+        x_prime = x*(1-x)
+        return x_prime
+
+    def train(self, training_inputs, training_outputs, iterations):
+        """
+        text
+        """
+        for i in range(iterations):
+
+
 
 training_input = np.array([[0, 0, 1],
                            [1, 1, 1],

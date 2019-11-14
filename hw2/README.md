@@ -8,6 +8,16 @@ Machine Learning
 
 I constructed the neuron first, to understand how it worked before really committing to manipulating the datasets. I followed a video and a few articles, cited below. The code is very similar as I used the video to learn how a neural net works conceptually. The next step is incorporating the data, whether its disseminating the data into a neuron or figuring out how to make more than one neuron. Layers will be after.
 
+Data was split into 3 partitions (45/45/10):
+
+1) input_data - this will be used while constructing the neural net
+
+2) validation_data - this will be used to verify whether the algorithm is over fitting the input_data and to tune parameters
+
+3) test_data - a small sample in which to run the algorithm on
+
+ds0 was chosen due to the fact that ds0's datasets are (though writing this I realize this uses ds1)
+
 ---------------------------------
 ## Perceptron Brekadown
 
