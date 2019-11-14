@@ -23,16 +23,7 @@ def sigmoid(x):
     """
     args: x - some number
 
-    retrun: some value between 0 and 1 based on sigmoid function
-
-    Activation Function:
-    + Allows the neuron to react in a non-binary fashion (ie. not 0/1, true/false)
-    + Somewhat computationally expensive
-    + This is a parameter that can be changed to improve performance, though
-      sigmoid function seems to be the most common
-      + Sigmoid function is preferred because "the nonlinear properties of this
-        function means that the rate of change is slower at the extremes and
-        faster in the center.""
+    return: some value between 0 and 1 based on sigmoid function
     """
 
     return 1/(1+np.exp(-x))
@@ -40,9 +31,9 @@ def sigmoid(x):
 
 def sigmoid_derivative(x):
     """
+    args: x - some number
+
     defining derivative because I don't want to symbolically solve for it
-
-
     """
     x_prime = x*(1-x)
     return x_prime
