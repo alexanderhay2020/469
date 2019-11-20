@@ -65,9 +65,9 @@ class NeuralNet(object):
         text
         """
 
-        weights = np.random.random((training_input.shape[1],3)) # starting weight for each column (synapse)
-        w0 = 2*np.random.random((training_input.shape[1],6)) - 1
-        w1 = 2*np.random.random((w0.shape[0],3)) - 1
+        # weights = np.random.random((training_input.shape[1],3)) # starting weight for each column (synapse)
+        w0 = 2*np.random.random([training_input.shape[1],6]) - 1
+        w1 = 2*np.random.random([w0.shape[0],3]) - 1
 
         print "w0: "
         print w0.shape
@@ -85,10 +85,13 @@ class NeuralNet(object):
             print
 
             print "dot product: "
-            print np.dot(l0,w0).shape
+            xw = np.dot(l0,w0)
+            print xw.shape
 
-            l1 = self.sigmoid(np.dot(l0,w0))
-            l2 = self.sigmoid(np.dot(l1,w1))
+            # l1 = self.sigmoid(1)
+            # print l1
+            l1 = self.sigmoid(xw)
+            # l2 = self.sigmoid(np.dot(l1,w1))
 
             # print "layer shape: "
             # print l0.shape
@@ -101,25 +104,25 @@ class NeuralNet(object):
             # print xw
             # print
             # output = self.sigmoid(xw)
-
-            l2_error = training_output - l2
-
-            if (i% iterations) == 0:
-                print "Error:" + str(np.mean(np.abs(l2_error)))
-
-            l2_delta = l2_error*self.sigmoid_derivative(l2)
-
-            l1_error = l2_delta.dot(w1.T)
-
-            l1_delta = l1_error * self.sigmoid_derivative(l1)
+            #
+            # l2_error = training_output - l2
+            #
+            # if (i% iterations) == 0:
+            #     print "Error:" + str(np.mean(np.abs(l2_error)))
+            #
+            # l2_delta = l2_error*self.sigmoid_derivative(l2)
+            #
+            # l1_error = l2_delta.dot(w1.T)
+            #
+            # l1_delta = l1_error * self.sigmoid_derivative(l1)
 
             # print "delta shape: "
             # print l1_delta.shape
             # print l2_delta.shape
             # print
             # print
-            w1 += w1 + np.dot(l1.T,l2_delta)
-            w0 += w0 + np.dot(l0.T,l1_delta)
+            # w1 += w1 + np.dot(l1.T,l2_delta)
+            # w0 += w0 + np.dot(l0.T,l1_delta)
 
             # print "weights: "
             # print w0
@@ -136,7 +139,7 @@ def main():
     text
     """
     # training_input = np.loadtxt('training_input.tsv')
-    input = np.random.randint(9,size=(11,6)) # data simulating 11 instances of 6-dim input
+    input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
 
     # training_output = np.loadtxt('training_output.tsv')
     output = np.zeros([len(input),3])

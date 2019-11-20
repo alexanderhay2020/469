@@ -41,7 +41,7 @@ def sigmoid_derivative(x):
     return x_prime
 
 # t, v, w, x, y, dtheta
-input = np.loadtxt('training_input.tsv')
+input = np.loadtxt('Hay_Alexander_HW2B/data/training_input.tsv')
 # input = np.random.randint(9,size=(10,6)) # data simulating 10 instances of 6-dim input
 
 output = np.zeros([len(input),3])
@@ -74,7 +74,7 @@ for i in range(2000):
     neuron
     """
     xw = np.dot(input,weights) # [4x3]*[3*1]=[4x1]
-
+    print xw.shape
     output = sigmoid(xw)
 
     error = output - output

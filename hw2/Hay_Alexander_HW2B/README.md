@@ -1,35 +1,25 @@
 # ME 469 - Homework 1B
 
 Alexander Hay<br/>
-ME 469, HW2, Part A<br/>
+ME 469, HW2, Part B<br/>
 Machine Learning
-
-## Preface
-
-I constructed the neuron first, to understand how it worked before really committing to manipulating the datasets. I followed a video and a few articles, cited below. The code is very similar as I used the video to learn how a neural net works conceptually. The next step is incorporating the data, whether its disseminating the data into a neuron or figuring out how to make more than one neuron. Layers will be after.
-
-Data was split into 3 partitions (45/45/10):
-
-1) input_data - this will be used while constructing the neural net
-
-2) validation_data - this will be used to verify whether the algorithm is over fitting the input_data and to tune parameters
-
-3) test_data - a small sample in which to run the algorithm on
-
-ds1 was chosen because it has more data
+Algorithm: Neural Network
+Learning Aim: Motion Model
+Input: t, x, y, theta, v, w
+Output: dx, dy, dtheta
 ---------------------------------
-## Perceptron Brekadown
+## File Content Breakdown
 
-### Imports and Global Variables:
+#### data
++ 10_input.tsv - a snapshot of first 10 training data samples
++ test input.ts - 10% of the total data, used to test nn model
++ training_input - 45% of the total data, used to build network with
++ validation_data - 45% of the total data, held to verify model with
 
-##### Imports:
-+ numpy
-
-##### Global Variables:
-
-+ input_data - ds1_Groundtruth.dat and ds1_Odometry.dat data, sorted by timestamp
-
-+ Data has only gone through minor combing for reason stated above.
+#### programs
++ nn.py - broken, but shows framework of layered network
++ perceptron.py - proof of concept
++ run.py - perceptron concept applied to training data
 
 ### Functions
 
