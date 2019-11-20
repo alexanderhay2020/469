@@ -4,11 +4,11 @@ HW2 - Machine Learning
 
 Learning aim: Motion model
 Learning algorithm: Neural Network
-Dataset: DS1
- + Training Data: (t, v, w) - odometry
+Dataset: DS0
+ + Training Data:        (v, w) - odometry
                   (x, y, theta) - groundtruth
 
- + Test Data: (t, v, w) - odometry
+ + Test Data: (v, w) - odometry
 
 Part A
 1. build training set
@@ -19,7 +19,7 @@ Part A
 
 import numpy as np
 
-np.random.seed(1) # for troubleshooting, can reproduce
+np.random.seed(1)
 
 def sigmoid(x):
     """
@@ -30,7 +30,6 @@ def sigmoid(x):
 
     return 1/(1+np.exp(-x))
 
-
 def sigmoid_derivative(x):
     """
     args: x - some number
@@ -40,49 +39,71 @@ def sigmoid_derivative(x):
     x_prime = x*(1-x)
     return x_prime
 
-# t, v, w, x, y, dtheta
-input = np.loadtxt('training_input.tsv')
-# input = np.random.randint(9,size=(10,6)) # data simulating 10 instances of 6-dim input
+# t, training_input, y, theta, v, w
+training_input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
+# training_input = np.loadtxt('10_input.tsv')
 
-output = np.zeros([len(input),3])
-# x, y, theta
-for i in range(len(input)):
+training_output= np.zeros([len(training_input),3])
+
+for i in range(len(training_input)):
     """
     Motion Model
     """
 
-    time = input[i,0]                # time
-    v = input[i,4]                   # linear velocity
-    w = input[i,5]                   # angular velocity
+    time = training_input[i,0]                # time
+    v = training_input[i,4]                   # linear velocity
+    w = training_input[i,5]                   # angular velocity
 
-    theta = w*time                   # dtheta = w*t
-    delta_x = (v*np.cos(theta)*time) # dx = vt*cos(theta)
-    delta_y = (v*np.sin(theta)*time) # dy = vt*sin(theta)
+    theta = w*time                   			  # dtheta = w*t
+    delta_training_input = (v*np.cos(theta)*time) # dtraining_input = vt*cos(theta)
+    delta_y = (v*np.sin(theta)*time)              # dy = vt*sin(theta)
 
-    output[i,0] = delta_x
-    output[i,1] = delta_y
-    output[i,2] = theta
+    training_output[i,0] = delta_training_input
+    training_output[i,1] = delta_y
+    training_output[i,2] = theta
 
-weights = np.random.random([6,3]) # starting weight for each column (synapse)
+# randomly initialize our weights with mean 0
+w0 = 2*np.random.random((6,6)) - 1
+w1 = 2*np.random.random((6,3)) - 1
 
-print "Starting Weights: "
-print weights
+print "Training Output: "
+print training_output
 print
 
-for i in range(2000):
-    """
-    neuron
-    """
-    xw = np.dot(input,weights) # [4x3]*[3*1]=[4x1]
+print "Layer 1 Weights: "
+print w0
+print
 
-    output = sigmoid(xw)
+print "Layer 2 Weights: "
+print w1
+print
 
-    error = output - output
+for j in range(20000):
 
-    adjustments = error * sigmoid_derivative(output)
+	# Feed forward through layers 0, 1, and 2
+    l0 = training_input
+    l1 = sigmoid(np.dot(l0,w0))
+    l2 = sigmoid(np.dot(l1,w1))
 
-    weights = weights + np.dot(input.T,adjustments)
+    l2_error = training_output - l2
 
-print "Weights after training: "
-print weights
+    l2_adjustment = l2_error*sigmoid_derivative(l2)
+
+    l1_error = np.dot(l2_adjustment,w1.T)
+
+    l1_adjustment = l1_error * sigmoid_derivative(l1)
+
+    w1 += l1.T.dot(l2_adjustment)
+    w0 += l0.T.dot(l1_adjustment)
+
+print "Output: "
+print l2
+print
+
+print "Layer 1 Weights: "
+print w0
+print
+
+print "Layer 2 Weights: "
+print w1
 print

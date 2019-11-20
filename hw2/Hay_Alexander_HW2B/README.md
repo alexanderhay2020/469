@@ -12,14 +12,16 @@ Output: dx, dy, dtheta
 
 #### data
 + 10_input.tsv - a snapshot of first 10 training data samples
+  + 10_input.tsv was moved to assignment home directory for code to function
 + test input.ts - 10% of the total data, used to test nn model
 + training_input - 45% of the total data, used to build network with
+  + training_input.tsv was moved to assignment home directory for code to function
 + validation_data - 45% of the total data, held to verify model with
 
 #### programs
-+ nn.py - broken, but shows framework of layered network
 + perceptron.py - proof of concept
-+ run.py - perceptron concept applied to training data
++ run_single.py - perceptron concept applied to training data
++ run.py - two layers of perceptrons applied to random data
 
 ### Functions
 
@@ -39,12 +41,3 @@ Gradient calculation for back propogation
 ### How It Works
 
 The perceptron in this exercise works as follows; first, the loop starts by taking in an input array. It then assigns each column a weight. The dot-product of the input column and its weight are calculated and passed through the sigmoid function. The sigmoid function output is then compared to the expected output and an error is derived. An adjustment to the error is needed to determine a proper weight to each column. This is back-propogation. The adjustment is calculated by multiplying the error by the gradient along the sigmoid, or rather, its derivative. This process repeated ad infinitum would produce a proper weight for the input column. In this case the loop is repeated 20,000 times.
-
-## References
-+ Arnx, Arthur. “First Neural Network for Beginners Explained (with Code).” Medium, Towards Data Science, 11 Aug. 2019, towardsdatascience.com/first-neural-network-for-beginners-explained-with-code-4cfd37e06eaf.
-
-+ Fried, Charles. “Let's Code a Neural Network From Scratch.” Medium, TypeMe, 6 Apr. 2017, medium.com/typeme/lets-code-a-neural-network-from-scratch-part-1-24f0a30d7d62.
-
-+ Spencer-Harper, Milo, director. Create a Simple Neural Network in Python from Scratch. YouTube, PolyCode, 31 Mar. 2018, www.youtube.com/watch?v=kft1AJ9WVDk.
-
-+ Spencer-Harper, Milo. “How to Build a Simple Neural Network in 9 Lines of Python Code.” Medium, 8 Apr. 2019, medium.com/technology-invention-and-more/how-to-build-a-simple-neural-network-in-9-lines-of-python-code-cc8f23647ca1.

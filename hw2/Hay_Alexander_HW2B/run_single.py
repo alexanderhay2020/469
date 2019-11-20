@@ -41,10 +41,10 @@ def sigmoid_derivative(x):
     return x_prime
 
 # t, v, w, x, y, dtheta
-input = np.loadtxt('Hay_Alexander_HW2B/data/training_input.tsv')
+input = np.loadtxt('training_input.tsv')
 # input = np.random.randint(9,size=(10,6)) # data simulating 10 instances of 6-dim input
 
-training_output = np.zeros([len(input),3])
+output = np.zeros([len(input),3])
 # x, y, theta
 for i in range(len(input)):
     """
@@ -59,9 +59,9 @@ for i in range(len(input)):
     delta_x = (v*np.cos(theta)*time) # dx = vt*cos(theta)
     delta_y = (v*np.sin(theta)*time) # dy = vt*sin(theta)
 
-    training_output[i,0] = delta_x
-    training_output[i,1] = delta_y
-    training_output[i,2] = theta
+    output[i,0] = delta_x
+    output[i,1] = delta_y
+    output[i,2] = theta
 
 weights = np.random.random([6,3]) # starting weight for each column (synapse)
 
@@ -69,7 +69,7 @@ print "Starting Weights: "
 print weights
 print
 
-for i in range(2000):
+for i in range(20000):
     """
     neuron
     """
@@ -77,7 +77,7 @@ for i in range(2000):
 
     output = sigmoid(xw)
 
-    error = training_output - output
+    error = output - output
 
     adjustments = error * sigmoid_derivative(output)
 

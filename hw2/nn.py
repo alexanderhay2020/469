@@ -1,203 +1,72 @@
-"""
-Alexander Hay
-HW2 - Machine Learning
-
-Learning aim: Motion model
-Learning algorithm: Neural Network
-Dataset: DS0
- + Training Data:        (v, w) - odometry
-                  (x, y, theta) - groundtruth
-
- + Test Data: (v, w) - odometry
-
-Part A
-1. build training set
-
-2. code learning algorithm
-
-"""
-
 import numpy as np
 
-# global variables
-np.random.seed(1) # for troubleshooting, can reproduce
+def nonlin(x,deriv=False):
+	if(deriv==True):
+	    return x*(1-x)
 
-class NeuralNet(object):
+	return 1/(1+np.exp(-x))
+
+# t, training_input, y, theta, v, w
+# training_input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
+training_input = np.loadtxt('Hay_Alexander_HW2B/data/training_input.tsv')
+
+# training_output= np.loadttraining_inputt('y.tsv')
+training_output= np.zeros([len(training_input),3])
+
+for i in range(len(training_input)):
     """
-    text
+    Motion Model
     """
-    def __init__(self, training_input, training_output, iterations, layers):
 
-        self.train(training_input, training_output, iterations, layers)
+    time = training_input[i,0]                # time
+    v = training_input[i,4]                   # linear velocity
+    w = training_input[i,5]                   # angular velocity
 
-    def sigmoid(self,x):
-        """
-        args: x - some number
+    theta = w*time                   # dtheta = w*t
+    delta_training_input = (v*np.cos(theta)*time) # dtraining_input = vt*cos(theta)
+    delta_y = (v*np.sin(theta)*time) # dy = vt*sin(theta)
 
-        return: some value between 0 and 1 based on sigmoid function
+    training_output[i,0] = delta_training_input
+    training_output[i,1] = delta_y
+    training_output[i,2] = theta
 
-        Activation Function:
-        + Allows the neuron to react in a non-binary fashion (ie. not 0/1, true/false)
-        + Somewhat computationally expensive
-        + This is a parameter that can be changed to improve performance, though
-          sigmoid function seems to be the most common
-          + Sigmoid function is preferred because "the nonlinear properties of this
-            function means that the rate of change is slower at the extremes and
-            faster in the center.""
-        """
+print "training output: "
+print training_output
+print
 
-        return float(1/(1+np.exp(-x)))
+np.random.seed(1)
 
+# randomly initialize our weights with mean 0
+syn0 = 2*np.random.random((6,6)) - 1
+syn1 = 2*np.random.random((6,3)) - 1
 
-    def sigmoid_derivative(self, x):
-        """
-        args: x - some number
+for j in xrange(10):
 
-        return: derivative of sigmoid at x
+	# Feed forward through layers 0, 1, and 2
+    l0 = training_input
+    l1 = nonlin(np.dot(l0,syn0))
+    l2 = nonlin(np.dot(l1,syn1))
 
-        Defines derivative
-        """
-        # x_prime = float(x*(1-x))
-        return float(x*(1-x))
+    # how much did we miss the target value?
+    l2_error = training_output - l2
 
-    def train(self, training_input, training_output, iterations, layers):
-        """
-        text
-        """
+    if (j% 10000) == 0:
+        print "Error:" + str(np.mean(np.abs(l2_error)))
 
-        # weights = np.random.random((training_input.shape[1],3)) # starting weight for each column (synapse)
-        w0 = 2*np.random.random([training_input.shape[1],6]) - 1
-        w1 = 2*np.random.random([w0.shape[0],3]) - 1
+    # in what direction is the target value?
+    # were we really sure? if so, don't change too much.
+    l2_delta = l2_error*nonlin(l2,deriv=True)
 
-        print "w0: "
-        print w0.shape
-        print
-        print "w1: "
-        print w1.shape
-        print
-        for i in range(iterations):
-            """
-            neuron
-            """
-            l0 = training_input
-            print "l0: "
-            print l0.shape
-            print
+    # how much did each l1 value contribute to the l2 error (according to the weights)?
+    l1_error = l2_delta.dot(syn1.T)
 
-            print "dot product: "
-            xw = np.dot(l0,w0)
-            print xw.shape
+    # in what direction is the target l1?
+    # were we really sure? if so, don't change too much.
+    l1_delta = l1_error * nonlin(l1,deriv=True)
 
-            # l1 = self.sigmoid(1)
-            # print l1
-            l1 = self.sigmoid(xw)
-            # l2 = self.sigmoid(np.dot(l1,w1))
+    syn1 += l1.T.dot(l2_delta)
+    syn0 += l0.T.dot(l1_delta)
 
-            # print "layer shape: "
-            # print l0.shape
-            # print l1.shape
-            # print l2.shape
-            # print
-            # input = test_input
-            # xw = np.dot(l0,weights) # [4x3]*[3*1]=[4x1]
-            # print "x*w: "
-            # print xw
-            # print
-            # output = self.sigmoid(xw)
-            #
-            # l2_error = training_output - l2
-            #
-            # if (i% iterations) == 0:
-            #     print "Error:" + str(np.mean(np.abs(l2_error)))
-            #
-            # l2_delta = l2_error*self.sigmoid_derivative(l2)
-            #
-            # l1_error = l2_delta.dot(w1.T)
-            #
-            # l1_delta = l1_error * self.sigmoid_derivative(l1)
-
-            # print "delta shape: "
-            # print l1_delta.shape
-            # print l2_delta.shape
-            # print
-            # print
-            # w1 += w1 + np.dot(l1.T,l2_delta)
-            # w0 += w0 + np.dot(l0.T,l1_delta)
-
-            # print "weights: "
-            # print w0
-            # print w1
-
-            # error = training_output - output
-            #
-            # adjustments = error * self.sigmoid_derivative(output)
-            #
-            # weights = weights + np.dot(input.T,adjustments)
-
-def main():
-    """
-    text
-    """
-    # training_input = np.loadtxt('training_input.tsv')
-    input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
-
-    # training_output = np.loadtxt('training_output.tsv')
-    output = np.zeros([len(input),3])
-
-    for i in range(len(input)):
-        """
-        Motion Model
-        """
-
-        time = input[i,0]                # time
-        v = input[i,4]                   # linear velocity
-        w = input[i,5]                   # angular velocity
-
-        theta = w*time                   # dtheta = w*t
-        delta_x = (v*np.cos(theta)*time) # dx = vt*cos(theta)
-        delta_y = (v*np.sin(theta)*time) # dy = vt*sin(theta)
-
-        output[i,0] = delta_x
-        output[i,1] = delta_y
-        output[i,2] = theta
-
-    NeuralNet(input, output, 2000, 2)
-
-if __name__ == '__main__':
-    main()
-# first index is from training video (https://www.youtube.com/watch?v=kft1AJ9WVDk)
-# second and third is verification
-# neuron should value first column and disregard second/third columns
-# an input of 0/1 in the first column should output a 0/1
-
-# np.random.seed(1) # for troubleshooting, can reproduce
-# weights = np.random.random((len(test_input),1)) # starting weight for each column (synapse)
-#
-# print "Starting Weights: "
-# print weights
-# print
-#
-# for i in range(20000):
-#     """
-#     neuron
-#     """
-#     input = test_input
-#     xw = np.dot(input,weights) # [4x3]*[3*1]=[4x1]
-#     # print "x*w: "
-#     # print xw
-#     # print
-#     output = sigmoid(xw)
-#
-#     error = test_output - output
-#
-#     adjustments = error * sigmoid_derivative(output)
-#
-#     weights = weights + np.dot(input.T,adjustments)
-#
-# print "Weights after training: "
-# print weights
-# print
-#
-# print "Output after sigmoid function: "
-# print output
-# print
+print "output: "
+print l2
+print
