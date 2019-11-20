@@ -50,13 +50,10 @@ def sigmoid_derivative(x):
 
 # t, v, w, x, y, dtheta
 input = np.loadtxt('input.tsv')
-# input = np.random.randint(9,size=(11,3)) # data simulating 11 instances of 6-dim input
 
 # x, y, theta
 output = np.loadtxt('output.tsv')
-# output = np.zeros([11,3]) # building output data
 
-# output data is the difference between time steps
 for i in range(len(input)):
     """
     Motion Model
@@ -74,64 +71,34 @@ for i in range(len(input)):
     output[i,1] = delta_y
     output[i,2] = delta_theta
 
-# first index is from training video (https://www.youtube.com/watch?v=kft1AJ9WVDk)
-# second and third is verification
-# neuron should value first column and disregard second/third columns
-# an input of 0/1 in the first column should output a 0/1
+weights = np.random.random((6,3)) # starting weight for each column (synapse)
 
-weights = np.random.random((input.shape[1],3)) # starting weight for each column (synapse)
-
-print "input: "
-print input.shape
+print "Input: "
+print input
 print
-
 
 print "Starting Weights: "
-print weights.shape
 print weights
 print
-
-print "output "
-print output.shape
-print
-
-# print "Input Shape: "
-# print input.shape
-# print
 
 for i in range(2000):
     """
     neuron
     """
-    # print "iteration: " + str(i)
-    # print "training_intput shape" + str(input.shape)
-
     xw = np.dot(input,weights) # [4x3]*[3*1]=[4x1]
-    # print "xw shape: " + str(xw.shape)
-    # print xw.shape
-    # print "x*w: "
-    # print xw
-    # print
+
     output = sigmoid(xw)
-    # print "output: " + str(output.shape)
 
     error = output - output
-    # print "error shape: " + str(error.shape)
-    # print
 
     adjustments = error * sigmoid_derivative(output)
 
     weights = weights + np.dot(input.T,adjustments)
 
 print "Weights after training: "
-print weights.shape
 print weights
 print
 
-print "Output after sigmoid function: "
-print output
-print
-
-print "Training output: "
+print "Output: "
 print output
 print
