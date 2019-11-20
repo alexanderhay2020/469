@@ -49,19 +49,18 @@ def sigmoid_derivative(x):
     return x_prime
 
 # t, v, w, x, y, dtheta
-input = np.loadtxt('input.tsv')
+input = np.loadtxt('training_input.tsv')
 
+output = np.zeros([len(input),3])
 # x, y, theta
-output = np.loadtxt('output.tsv')
-
 for i in range(len(input)):
     """
     Motion Model
     """
 
     time = input[i,0]       # time
-    v = input[i,1]          # velocity
-    theta = input[i,2]*time # dtheta = w*t
+    v = input[i,4]          # velocity
+    theta = input[i,5]*time # dtheta = w*t
 
     delta_x = (v*np.cos(theta)*time) # dx = vt*cos(theta)
     delta_y = (v*np.sin(theta)*time) # dy = vt*sin(theta)
@@ -73,9 +72,15 @@ for i in range(len(input)):
 
 weights = np.random.random((6,3)) # starting weight for each column (synapse)
 
-print "Input: "
-print input
-print
+# input = input[:,:3]
+
+# print "Input: "
+# print input
+# print
+
+# print "Output: "
+# print output
+# print
 
 print "Starting Weights: "
 print weights
@@ -99,6 +104,6 @@ print "Weights after training: "
 print weights
 print
 
-print "Output: "
-print output
-print
+# print "Output: "
+# print output
+# print

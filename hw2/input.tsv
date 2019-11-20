@@ -1,4 +1,4 @@
-# Time [s]	x [m]	y [m]	orientation [rad]	forward velocity [m/s]	angular velocity[rad/s]
+# Time [s]	x [m]	y [m]	orientation [rad]	linear velocity [m/s]	angular velocity[rad/s]
 
 1288971970	2.993278	2.993278	2.993278	0	0
 1288971970	2.9937811	2.9937811	2.9937811	0	0
