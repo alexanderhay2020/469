@@ -16,8 +16,7 @@ Data was split into 3 partitions (45/45/10):
 
 3) test_data - a small sample in which to run the algorithm on
 
-ds0 was chosen due to the fact that ds0's datasets are (though writing this I realize this uses ds1)
-
+ds1 was chosen because it has more data
 ---------------------------------
 ## Perceptron Brekadown
 
