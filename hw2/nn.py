@@ -71,7 +71,6 @@ class NeuralNet(object):
         text
         """
 
-        # weights = np.random.random((len(training_input),layers)) # starting weight for each column (synapse)
         weights = np.random.random((training_input.shape[1],3)) # starting weight for each column (synapse)
         w0 = 2*np.random.random((training_input.shape[1],6)) - 1
         w1 = 2*np.random.random((w0.shape[0],3)) - 1

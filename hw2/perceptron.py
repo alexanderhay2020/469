@@ -1,16 +1,4 @@
 """
-Alexander Hay
-HW2 - Machine Learning
-Learning aim: Motion model
-Learning algorithm: Neural Network
-Dataset: DS0
- + Training Data: (v, w) - odometry
-                  (x, y, theta) - groundtruth
- + Test Data: (v, w) - odometry
-Part A
-1. build training set
-2. code learning algorithm
-
 Based on video:
 https://www.youtube.com/watch?v=kft1AJ9WVDk)
 
