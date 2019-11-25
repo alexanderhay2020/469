@@ -18,6 +18,7 @@ Part A
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 np.random.seed(1)
 
@@ -96,6 +97,30 @@ for j in range(20000):
     w1 += l1.T.dot(l2_adjustment)
     w0 += l0.T.dot(l1_adjustment)
 
+fig1 = plt.figure()
+plt.title("Layer 0 Weights")
+# plt.xlabel()
+xticks = ['t','x','y','theta','v','w']
+
+plt.ylabel("magnitude")
+# plt.bar(w0,label="w0")
+for i in range(len(w0)):
+    # x=w0[i][0]
+    plt.plot(w0[i],label="layer " + str(i))
+    plt.xticks(w0[i],,xticks)
+plt.legend()
+
+fig2 = plt.figure()
+plt.title("Layer 1 Weights")
+plt.xlabel("d_x, d_y, d_theta")
+plt.ylabel("magnitude")
+# p(lt.bar(xlabel,w1,label="w1")
+for i in range(len(w1)):
+    plt.plot(w1[i],label="layer " + str(i))
+plt.legend()
+plt.show()
+
+
 print "Output: "
 print l2
 print
@@ -105,5 +130,5 @@ print w0
 print
 
 print "Layer 2 Weights: "
-print w1
+print w1[0]
 print

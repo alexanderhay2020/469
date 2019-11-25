@@ -308,7 +308,6 @@ class Astar(object): #start, goal, grid_map):
 
             return open_list
 
-
 class Astar_online(object): #start, goal, grid_map):
     """
     A* algorithm
