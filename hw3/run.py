@@ -42,7 +42,7 @@ def sigmoid_derivative(x):
 
 # t, input, y, theta, v, w
 # input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
-input = np.loadtxt('input.dat')
+input = np.loadtxt('input2.dat')
 
 output= np.zeros([len(input),3])
 
@@ -54,12 +54,9 @@ for i in range(len(input)):
     Motion Model
     """
 
-    time = input[i,0]                # time
+    duration = input[i,0]                # time
     v = input[i,1]                   # linear velocity
     w = input[i,2]                   # angular velocity
-
-    duration = time - t_0
-    t_0 = time
 
     theta = w*duration                   			  # dtheta = w*t
     delta_input = (v*np.cos(theta)*duration) # dinput = vt*cos(theta)
@@ -69,21 +66,24 @@ for i in range(len(input)):
     output[i,1] = delta_y
     output[i,2] = theta
 
+actual_output = output
+error = output
+
 # randomly initialize our weights with mean 0
 w0 = 2*np.random.random([3,6]) - 1
 w1 = 2*np.random.random([6,3]) - 1
 
 print "Training Output: "
-print output
+print actual_output
 print
-
-print "Layer 1 Weights: "
-print w0
-print
-
-print "Layer 2 Weights: "
-print w1
-print
+#
+# print "Layer 1 Weights: "
+# print w0
+# print
+#
+# print "Layer 2 Weights: "
+# print w1
+# print
 
 for j in range(20000):
 
@@ -126,14 +126,30 @@ for i in range(len(w1)):
 plt.legend()
 plt.show()
 
-print "Output: "
+print "Learned Output: "
 print l2
 print
 
-print "Layer 1 Weights: "
-print w0
-print
+# print "Layer 1 Weights: "
+# print w0
+# print
+#
+# print "Layer 2 Weights: "
+# print w1[0]
+# print
 
-print "Layer 2 Weights: "
-print w1[0]
-print
+for i in range(len(l2)):
+    error[i] = actual_output[i] - l2[i]
+
+print error
+
+fig3 = plt.figure()
+# plt.title("Layer 1 Weights")
+# plt.xlabel("d_x, d_y, d_theta")
+# plt.ylabel("magnitude")
+# p(lt.bar(xlabel,w1,label="w1")
+# for i in range(len(w1)):
+#     plt.plot(w1[i],label="weight " + str(i))
+# plt.legend()
+plt.plot(error)
+plt.show()
