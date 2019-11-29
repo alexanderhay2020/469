@@ -40,38 +40,19 @@ def sigmoid_derivative(x):
     x_prime = x*(1-x)
     return x_prime
 
-# t, input, y, theta, v, w
-# input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
-input = np.loadtxt('input2.dat')
 
-output= np.zeros([len(input),3])
+data = np.loadtxt('lwr_training.dat')
 
-# t_0 = 1288971842.041
-t_0 = 1288971925.782
-
-for i in range(len(input)):
-    """
-    Motion Model
-    """
-
-    duration = input[i,0]                # time
-    v = input[i,1]                   # linear velocity
-    w = input[i,2]                   # angular velocity
-
-    theta = w*duration                   			  # dtheta = w*t
-    delta_input = (v*np.cos(theta)*duration) # dinput = vt*cos(theta)
-    delta_y = (v*np.sin(theta)*duration)              # dy = vt*sin(theta)
-
-    output[i,0] = delta_input
-    output[i,1] = delta_y
-    output[i,2] = theta
+input = data[:,:2]
+output = data [:,-2:]
 
 actual_output = output
 error = output
+MAPE_error = output
 
 # randomly initialize our weights with mean 0
-w0 = 2*np.random.random([3,6]) - 1
-w1 = 2*np.random.random([6,3]) - 1
+w0 = 2*np.random.random([2,6]) - 1
+w1 = 2*np.random.random([6,2]) - 1
 
 print "Training Output: "
 print actual_output
@@ -141,7 +122,18 @@ print
 for i in range(len(l2)):
     error[i] = actual_output[i] - l2[i]
 
-print error
+MAE = error.sum(0)/len(error)
+print "MAE error: "
+print MAE
+print
+
+for i in range(len(l2)):
+    MAPE_error[i] = ((actual_output[i] - l2[i])/actual_output[i])/(100/len(MAPE_error))
+
+MAPE = MAPE_error.sum(0)/len(MAPE_error)
+print "MAPE error: "
+print MAPE
+print
 
 fig3 = plt.figure()
 # plt.title("Layer 1 Weights")

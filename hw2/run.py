@@ -41,7 +41,7 @@ def sigmoid_derivative(x):
     return x_prime
 
 # t, v, w, x, y, dtheta
-input = np.loadtxt('Hay_Alexander_HW2B/data/training_input.tsv')
+input = np.loadtxt('training_input.tsv')
 # input = np.random.randint(9,size=(10,6)) # data simulating 10 instances of 6-dim input
 
 training_output = np.zeros([len(input),3])
