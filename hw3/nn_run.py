@@ -4,11 +4,8 @@ HW2 - Machine Learning
 
 Learning aim: Motion model
 Learning algorithm: Neural Network
-Dataset: DS0
+Dataset: DS1
  + Training Data:        (v, w) - odometry
-                  (x, y, theta) - groundtruth
-
- + Test Data: (v, w) - odometry
 
 Part A
 1. build training set
@@ -40,37 +37,42 @@ def sigmoid_derivative(x):
     x_prime = x*(1-x)
     return x_prime
 
-# t, input, y, theta, v, w
 # input = np.random.randint(9,size=(10,6)) # data simulating 11 instances of 6-dim input
-input = np.loadtxt('nn_input2.dat')
+input = np.loadtxt('nn_input.tsv')
 
 output= np.zeros([len(input),3])
 
-# t_0 = 1288971842.041
-# t_0 = 1288971925.782
+t_0 = 1288971842.041
+theta_0 = 1.44859633
 
 for i in range(len(input)):
     """
     Motion Model
     """
 
-    duration = input[i,0]            # time
+    time = input[i,0]               # time
     v = input[i,1]                   # linear velocity
     w = input[i,2]                   # angular velocity
+    duration = time - t_0
+    t_0 = time
 
-    theta = w*duration                   			  # dtheta = w*t
-    delta_x = (v*np.cos(theta)*duration) # dinput = vt*cos(theta)
-    delta_y = (v*np.sin(theta)*duration)              # dy = vt*sin(theta)
+    theta = theta_0 + (w*duration)        # dtheta = w*t
+    theta0 = theta
+    delta_x = (v*np.cos(theta)*duration) # dx = vt*cos(theta)
+    delta_y = (v*np.sin(theta)*duration) # dy = vt*sin(theta)
 
     output[i,0] = delta_x
     output[i,1] = delta_y
     output[i,2] = theta
 
+np.savetxt('nn_output.tsv', output)
+print "nn_output.tsv saved"
+
 actual_output = output
 error = output
 
 # randomly initialize our weights with mean 0
-w0 = 2*np.random.random([3,6]) - 1
+w0 = 2*np.random.random([4,6]) - 1
 w1 = 2*np.random.random([6,3]) - 1
 
 print "Training Output: "
@@ -103,28 +105,34 @@ for j in range(20000):
     w1 += l1.T.dot(l2_adjustment)
     w0 += l0.T.dot(l1_adjustment)
 
-fig1 = plt.figure()
-plt.title("Layer 0 Weights")
-# plt.xlabel()
-xticks = ['t','v','w']
+np.savetxt('nn_w0.tsv', w0)
+print "nn_w0.tsv saved"
 
-plt.ylabel("magnitude")
-# plt.bar(w0,label="w0")
-for i in range(len(w0)):
-    # x=w0[i][0]
-    plt.plot(w0[i],label="weight " + str(i))
-    plt.xticks(w0[i],xticks)
-plt.legend()
+np.savetxt('nn_w1.tsv', w1)
+print "nn_w1.tsv saved"
 
-fig2 = plt.figure()
-plt.title("Layer 1 Weights")
-plt.xlabel("d_x, d_y, d_theta")
-plt.ylabel("magnitude")
-# p(lt.bar(xlabel,w1,label="w1")
-for i in range(len(w1)):
-    plt.plot(w1[i],label="weight " + str(i))
-plt.legend()
-plt.show()
+# fig1 = plt.figure()
+# plt.title("Layer 0 Weights")
+# # plt.xlabel()
+# xticks = ['t','v','w']
+#
+# plt.ylabel("magnitude")
+# # plt.bar(w0,label="w0")
+# for i in range(len(w0)):
+#     # x=w0[i][0]
+#     plt.plot(w0[i],label="weight " + str(i))
+#     plt.xticks(w0[i],xticks)
+# plt.legend()
+#
+# fig2 = plt.figure()
+# plt.title("Layer 1 Weights")
+# plt.xlabel("d_x, d_y, d_theta")
+# plt.ylabel("magnitude")
+# # p(lt.bar(xlabel,w1,label="w1")
+# for i in range(len(w1)):
+#     plt.plot(w1[i],label="weight " + str(i))
+# plt.legend()
+# plt.show()
 
 print "Learned Output: "
 print l2
@@ -141,15 +149,8 @@ print
 for i in range(len(l2)):
     error[i] = actual_output[i] - l2[i]
 
-print error
+np.savetxt('nn_predicted.tsv', l2)
+print "nn_predicted.tsv saved"
 
-fig3 = plt.figure()
-# plt.title("Layer 1 Weights")
-# plt.xlabel("d_x, d_y, d_theta")
-# plt.ylabel("magnitude")
-# p(lt.bar(xlabel,w1,label="w1")
-# for i in range(len(w1)):
-#     plt.plot(w1[i],label="weight " + str(i))
-# plt.legend()
-plt.plot(error)
-plt.show()
+np.savetxt('nn_error.tsv', error)
+print "nn_error.tsv saved"

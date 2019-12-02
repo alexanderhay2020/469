@@ -41,7 +41,7 @@ def sigmoid_derivative(x):
     return x_prime
 
 
-data = np.loadtxt('lwr_training.dat')
+data = np.loadtxt('lwr_input.dat')
 
 input = data[:,:2]
 output = data [:,-2:]
@@ -84,28 +84,34 @@ for j in range(20000):
     w1 += l1.T.dot(l2_adjustment)
     w0 += l0.T.dot(l1_adjustment)
 
-fig1 = plt.figure()
-plt.title("Layer 0 Weights")
-# plt.xlabel()
-xticks = ['t','v','w']
+np.savetxt('lwr_w0.tsv', w0)
+print "lwr_w0.tsv saved"
 
-plt.ylabel("magnitude")
-# plt.bar(w0,label="w0")
-for i in range(len(w0)):
-    # x=w0[i][0]
-    plt.plot(w0[i],label="weight " + str(i))
-    plt.xticks(w0[i],xticks)
-plt.legend()
+np.savetxt('lwr_w1.tsv', w1)
+print "lwr_w1.tsv saved"
 
-fig2 = plt.figure()
-plt.title("Layer 1 Weights")
-plt.xlabel("d_x, d_y, d_theta")
-plt.ylabel("magnitude")
-# p(lt.bar(xlabel,w1,label="w1")
-for i in range(len(w1)):
-    plt.plot(w1[i],label="weight " + str(i))
-plt.legend()
-plt.show()
+# fig1 = plt.figure()
+# plt.title("Layer 0 Weights")
+# # plt.xlabel()
+# xticks = ['t','v','w']
+#
+# plt.ylabel("magnitude")
+# # plt.bar(w0,label="w0")
+# for i in range(len(w0)):
+#     # x=w0[i][0]
+#     plt.plot(w0[i],label="weight " + str(i))
+#     plt.xticks(w0[i],xticks)
+# plt.legend()
+#
+# fig2 = plt.figure()
+# plt.title("Layer 1 Weights")
+# plt.xlabel("d_x, d_y, d_theta")
+# plt.ylabel("magnitude")
+# # p(lt.bar(xlabel,w1,label="w1")
+# for i in range(len(w1)):
+#     plt.plot(w1[i],label="weight " + str(i))
+# plt.legend()
+# plt.show()
 
 print "Learned Output: "
 print l2
@@ -122,26 +128,11 @@ print
 for i in range(len(l2)):
     error[i] = actual_output[i] - l2[i]
 
-MAE = error.sum(0)/len(error)
-print "MAE error: "
-print MAE
-print
+np.savetxt('lwr_predicted.tsv', l2)
+print "lwr_predicted.tsv saved"
 
-for i in range(len(l2)):
-    MAPE_error[i] = ((actual_output[i] - l2[i])/actual_output[i])/(100/len(MAPE_error))
+np.savetxt('lwr_error.tsv', error)
+print "lwr_error.tsv saved"
 
-MAPE = MAPE_error.sum(0)/len(MAPE_error)
-print "MAPE error: "
-print MAPE
-print
-
-fig3 = plt.figure()
-# plt.title("Layer 1 Weights")
-# plt.xlabel("d_x, d_y, d_theta")
-# plt.ylabel("magnitude")
-# p(lt.bar(xlabel,w1,label="w1")
-# for i in range(len(w1)):
-#     plt.plot(w1[i],label="weight " + str(i))
-# plt.legend()
-plt.plot(error)
-plt.show()
+np.savetxt('lwr_output.tsv', output)
+print "lwr_output.tsv saved"
