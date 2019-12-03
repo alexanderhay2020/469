@@ -41,14 +41,13 @@ def sigmoid_derivative(x):
     return x_prime
 
 
-data = np.loadtxt('lwr_input.dat')
+data = np.loadtxt('w_zero_input.tsv')
 
 input = data[:,:2]
 output = data [:,-2:]
 
 actual_output = output
 error = output
-MAPE_error = output
 
 # randomly initialize our weights with mean 0
 w0 = 2*np.random.random([2,6]) - 1
@@ -57,16 +56,16 @@ w1 = 2*np.random.random([6,2]) - 1
 print "Training Output: "
 print actual_output
 print
-#
-# print "Layer 1 Weights: "
-# print w0
-# print
-#
-# print "Layer 2 Weights: "
-# print w1
-# print
 
-for j in range(20000):
+print "Layer 1 Weights: "
+print w0
+print
+
+print "Layer 2 Weights: "
+print w1
+print
+
+for j in range(2000):
 
 	# Feed forward through layers 0, 1, and 2
     l0 = input
@@ -84,11 +83,11 @@ for j in range(20000):
     w1 += l1.T.dot(l2_adjustment)
     w0 += l0.T.dot(l1_adjustment)
 
-np.savetxt('lwr_w0.tsv', w0)
-print "lwr_w0.tsv saved"
+np.savetxt('w_zero_w0.tsv', w0)
+print "w_zero_w0.tsv saved"
 
-np.savetxt('lwr_w1.tsv', w1)
-print "lwr_w1.tsv saved"
+np.savetxt('w_zero_w1.tsv', w1)
+print "w_zero_w1.tsv saved"
 
 # fig1 = plt.figure()
 # plt.title("Layer 0 Weights")
@@ -117,22 +116,22 @@ print "Learned Output: "
 print l2
 print
 
-# print "Layer 1 Weights: "
-# print w0
-# print
-#
-# print "Layer 2 Weights: "
-# print w1[0]
-# print
+print "Layer 1 Weights: "
+print w0
+print
+
+print "Layer 2 Weights: "
+print w1
+print
 
 for i in range(len(l2)):
     error[i] = actual_output[i] - l2[i]
 
-np.savetxt('lwr_predicted.tsv', l2)
-print "lwr_predicted.tsv saved"
+np.savetxt('w_zero_predicted.tsv', l2)
+print "w_zero_predicted.tsv saved"
 
-np.savetxt('lwr_error.tsv', error)
-print "lwr_error.tsv saved"
+np.savetxt('w_zero_error.tsv', error)
+print "w_zero_error.tsv saved"
 
-np.savetxt('lwr_output.tsv', output)
-print "lwr_output.tsv saved"
+np.savetxt('w_zero_output.tsv', output)
+print "w_zero_output.tsv saved"

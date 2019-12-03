@@ -27,9 +27,9 @@ def sigmoid(x):
 
     return 1/(1+np.exp(-x))
 
-input = np.loadtxt('validation_input.tsv')
+input = np.loadtxt('nn_validation_input.tsv')
 
-output = np.loadtxt('validation_output.tsv')
+output = np.loadtxt('nn_validation_output.tsv')
 
 actual_output = output
 error = output
